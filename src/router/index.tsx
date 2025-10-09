@@ -19,7 +19,7 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <BondyAIPage />,
+    element: <PlaceholderPage title="🏠 BondBox" />,
   },
   {
     path: '/auth/login',

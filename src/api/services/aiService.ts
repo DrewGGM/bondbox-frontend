@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const GROUP_ID = import.meta.env.VITE_HARDCODED_GROUP_ID;
 const JWT_TOKEN = import.meta.env.VITE_HARDCODED_JWT_TOKEN;
+const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
 export interface AIQueryRequest {
   query: string;
@@ -45,7 +46,7 @@ export const aiService = {
         group_id: GROUP_ID,
       };
 
-      const fullURL = 'http://localhost:5000/api/v1/query';
+      const fullURL = `${API_BASE_URL}/api/v1/query`;
 
       const response = await axios.post(fullURL, requestData, {
         headers: {
@@ -61,25 +62,31 @@ export const aiService = {
       
       if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNABORTED') {
         throw new Error('El agente está tardando más de lo esperado. Por favor, intenta de nuevo.');
-      } else if (error && typeof error === 'object' && 'response' in error && 
-                 error.response && typeof error.response === 'object' && 'status' in error.response) {
+      }
+      
+      if (error && typeof error === 'object' && 'response' in error && 
+          error.response && typeof error.response === 'object' && 'status' in error.response) {
         const status = (error.response as { status: number }).status;
         if (status === 401) {
           throw new Error('Error de autenticación. Verifica el token.');
-        } else if (status === 404) {
+        }
+        if (status === 404) {
           throw new Error('Endpoint no encontrado. Verifica la configuración del servidor.');
-        } else if (status >= 500) {
+        }
+        if (status >= 500) {
           throw new Error('Error del servidor. El agente puede estar procesando tu solicitud.');
         }
-      } else if (error && typeof error === 'object' && 'message' in error && 
-                 typeof error.message === 'string' && error.message.includes('Network Error')) {
-        throw new Error('Error de conexión. Verifica que el agente esté ejecutándose.');
-      } else {
-        const message = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' 
-          ? error.message 
-          : 'Error desconocido';
-        throw new Error(`Error al consultar el agente: ${message}`);
       }
+      
+      if (error && typeof error === 'object' && 'message' in error && 
+          typeof error.message === 'string' && error.message.includes('Network Error')) {
+        throw new Error('Error de conexión. Verifica que el agente esté ejecutándose.');
+      }
+      
+      const message = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' 
+        ? error.message 
+        : 'Error desconocido';
+      throw new Error(`Error al consultar el agente: ${message}`);
     }
   },
 };

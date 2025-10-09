@@ -75,7 +75,7 @@ export const BudgetExceededCard: React.FC<BudgetExceededCardProps> = ({ data }) 
       </div>
       
       <div className="space-y-3">
-        {budgetWithExpenses.map((budget, index) => {
+        {budgetWithExpenses.map((budget) => {
           const getStatusColor = (status: string) => {
             switch (status) {
               case 'OK': return 'text-green-600 bg-green-100';

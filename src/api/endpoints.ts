@@ -28,10 +28,6 @@ export const ENDPOINTS = {
     PRODUCTS: '/api/inventory/products',
     SHOPPING_LIST: '/api/inventory/shopping-list',
   },
-  AI: {
-    CHAT: '/api/ai/chat',
-    SUGGESTIONS: '/api/ai/suggestions',
-  },
   GROUPS: {
     LIST: '/api/groups',
     MEMBERS: (groupId: string) => `/api/groups/${groupId}/members`,

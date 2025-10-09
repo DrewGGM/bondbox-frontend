@@ -5,6 +5,7 @@ import { ChatHeader } from '@/components/features/ai/ChatHeader';
 import { ChatMessage } from '@/components/features/ai/ChatMessage';
 import { ChatInput } from '@/components/features/ai/ChatInput';
 import { QuickSuggestions } from '@/components/features/ai/QuickSuggestions';
+//import { ChatSidebar } from '@/components/features/ai/ChatSidebar';
 import { aiService } from '@/api/services/aiService';
 import type { Message } from '@/types/ai.types';
 
@@ -59,9 +60,9 @@ export const BondyAIPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <div className="flex-1 max-w-4xl w-full mx-auto p-6 h-[calc(100vh-64px)]">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-6 flex gap-6 h-[calc(100vh-64px)]">
         {/* Main Chat Area */}
-        <div className="h-full bg-white rounded-xl shadow-sm flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white rounded-xl shadow-sm flex flex-col overflow-hidden">
           <ChatHeader />
 
           {/* Messages */}
@@ -94,6 +95,7 @@ export const BondyAIPage: React.FC = () => {
           <QuickSuggestions onSuggestionClick={handleSuggestionClick} />
           <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
         </div>
+        {/* <ChatSidebar stats={stats} /> */}
       </div>
     </div>
   );

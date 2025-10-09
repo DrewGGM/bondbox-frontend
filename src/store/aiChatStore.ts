@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import type { Message, MCPResponse } from '@/types/ai.types';
+import type { Message, ChatStats, MCPResponse } from '@/types/ai.types';
 
 interface AiChatState {
   messages: Message[];
   isTyping: boolean;
+  stats: ChatStats;
   addMessage: (message: Message) => void;
   addMCPResponse: (response: MCPResponse) => void;
   setTyping: (isTyping: boolean) => void;
@@ -20,6 +21,12 @@ export const useAiChatStore = create<AiChatState>((set) => ({
     },
   ],
   isTyping: false,
+  stats: {
+    tasksPending: 8,
+    tasksCompleted: 3,
+    expensesToday: 185400,
+    incomeToday: 2500000,
+  },
   
   addMessage: (message) =>
     set((state) => ({
