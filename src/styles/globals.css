@@ -4,6 +4,18 @@
 
 @layer base {
   :root {
+    --primary-light: #BFC5D9;
+    --primary-dark: #493F23;
+    --accent-bright: #F28627;
+    --accent-warn: #BC3503;
+    --accent-deep: #591902;
+    --neutral-white: #FFFFFF;
+    --neutral-gray: #F5F5F5;
+    --success: #4CAF50;
+    --info: #2196F3;
+    --warning: #FFC107;
+    
+    /* Tailwind color mappings */
     --color-primary: #F28627;
     --color-primary-dark: #BC3503;
     --color-primary-darker: #591902;
@@ -11,8 +23,19 @@
     --color-light: #BFC5D9;
   }
   
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
   body {
-    @apply font-sans text-gray-900;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--neutral-gray);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    @apply text-gray-900;
   }
 }
 
@@ -31,5 +54,134 @@
   
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  /* Chat specific styles */
+  .chat-header {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-warn));
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+  }
+
+  .bot-avatar {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4CAF50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .message-bubble {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .message.bot .message-bubble {
+    background: var(--neutral-gray);
+    color: var(--primary-dark);
+    border-bottom-left-radius: 4px;
+  }
+
+  .message.user .message-bubble {
+    background: var(--accent-bright);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+    border: 2px solid var(--success);
+  }
+
+  .expense-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+    border: 2px solid var(--info);
+  }
+
+  .task-priority {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .priority-high {
+    background: rgba(188, 53, 3, 0.1);
+    color: var(--accent-warn);
+  }
+
+  .priority-medium {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning);
+  }
+
+  .priority-low {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+  }
+
+  .batch-tasks {
+    background: rgba(76, 175, 80, 0.05);
+    border: 2px dashed var(--success);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+
+  .analysis-card {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05));
+    border: 2px solid var(--info);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+
+  .suggestion-pill {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid var(--primary-light);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--primary-dark);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+  }
+
+  .suggestion-pill:hover {
+    background: var(--accent-bright);
+    color: white;
+    border-color: var(--accent-bright);
   }
 }

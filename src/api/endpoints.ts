@@ -1,4 +1,8 @@
 export const ENDPOINTS = {
+  HEALTH: '/api/v1/health',
+  AI: {
+    QUERY: '/api/v1/query',
+  },
   AUTH: {
     LOGIN: '/api/auth/login',
     REGISTER: '/api/auth/register',
