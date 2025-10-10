@@ -5,7 +5,8 @@ import type {
   FinancialSummaryCardData, 
   TransactionListCardData, 
   CategoryListCardData, 
-  BudgetStatusCardData 
+  BudgetStatusCardData,
+  EmailNotificationCardData
 } from '@/types/ai.types';
 import { TransactionCard } from './cards/TransactionCard';
 import { CategoryCard } from './cards/CategoryCard';
@@ -16,6 +17,7 @@ import { BudgetStatusCard } from './cards/BudgetStatusCard';
 import { CategoryExpenseCard } from './cards/CategoryExpenseCard';
 import { BudgetLimitsCard } from './cards/BudgetLimitsCard';
 import { BudgetExceededCard } from './cards/BudgetExceededCard';
+import { EmailNotificationCard } from './cards/EmailNotificationCard';
 
 interface MCPDataRendererProps {
   data: any;
@@ -42,6 +44,11 @@ export const MCPDataRenderer: React.FC<MCPDataRendererProps> = ({ data }) => {
   // Detectar array de límites de presupuesto (formato alternativo)
   if (Array.isArray(data) && data.length > 0 && data[0].limit_amount && data[0].category && data[0].alert_threshold !== undefined) {
     return <BudgetLimitsCard data={data} />;
+  }
+
+  // Detectar notificación de email (respuesta de envío de correo)
+  if (data.success !== undefined && data.message && data.email_sent_to) {
+    return <EmailNotificationCard data={data as EmailNotificationCardData} />;
   }
 
   // Detectar datos de límites excedidos (respuesta de "¿Estoy cerca de exceder algún límite de gasto?")

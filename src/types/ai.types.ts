@@ -1,6 +1,6 @@
 export type MessageType = 'user' | 'bot';
 
-export type CardType = 'task' | 'expense' | 'income' | 'inventory' | 'transaction' | 'category' | 'financial_summary' | 'transaction_list' | 'category_list' | 'budget_status' | 'category_expense' | 'budget_limits' | 'budget_exceeded';
+export type CardType = 'task' | 'expense' | 'income' | 'inventory' | 'transaction' | 'category' | 'financial_summary' | 'transaction_list' | 'category_list' | 'budget_status' | 'category_expense' | 'budget_limits' | 'budget_exceeded' | 'email_notification';
 
 export interface Message {
   id: string;
@@ -15,7 +15,7 @@ export interface Message {
 
 export interface MessageCard {
   type: CardType;
-  data: TaskCardData | ExpenseCardData | IncomeCardData | InventoryCardData | TransactionCardData | CategoryCardData | FinancialSummaryCardData | TransactionListCardData | CategoryListCardData | BudgetStatusCardData | CategoryExpenseCardData | BudgetLimitsCardData | BudgetExceededCardData;
+  data: TaskCardData | ExpenseCardData | IncomeCardData | InventoryCardData | TransactionCardData | CategoryCardData | FinancialSummaryCardData | TransactionListCardData | CategoryListCardData | BudgetStatusCardData | CategoryExpenseCardData | BudgetLimitsCardData | BudgetExceededCardData | EmailNotificationCardData;
 }
 
 export interface TaskCardData {
@@ -186,4 +186,11 @@ export interface BudgetExceededCardData {
     }>;
     total: number;
   };
+}
+
+export interface EmailNotificationCardData {
+  success: boolean;
+  message: string;
+  email_sent_to: string;
+  subject?: string;
 }
