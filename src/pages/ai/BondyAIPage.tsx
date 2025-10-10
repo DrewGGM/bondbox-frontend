@@ -59,36 +59,36 @@ export const BondyAIPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
-      <div className="flex-1 max-w-7xl w-full mx-auto p-6 flex gap-6 h-[calc(100vh-64px)]">
+
+      <div className="flex-1 w-full mx-auto p-3 md:p-6 flex gap-6 h-[calc(100vh-64px)] max-w-7xl">
         {/* Main Chat Area */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white rounded-lg md:rounded-xl shadow-sm flex flex-col overflow-hidden">
           <ChatHeader />
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-5">
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
-            
+
             {isTyping && (
-              <div className="flex gap-3 max-w-[80%]">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 bg-gradient-to-br from-primary to-primary-dark text-white">
+              <div className="flex gap-2 md:gap-3 max-w-[95%] md:max-w-[80%]">
+                <div className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0 bg-gradient-to-br from-primary to-primary-dark text-white">
                   B
                 </div>
-                <div className="px-4 py-3 bg-gray-100 rounded-xl rounded-bl-sm">
+                <div className="px-3 py-2 md:px-4 md:py-3 bg-gray-100 rounded-xl rounded-bl-sm">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                     </div>
-                    <span className="text-sm text-gray-600">Bondy está procesando tu consulta...</span>
+                    <span className="text-xs md:text-sm text-gray-600">Bondy está procesando...</span>
                   </div>
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 

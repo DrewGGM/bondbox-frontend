@@ -42,9 +42,9 @@ export const ChatHeader: React.FC = () => {
 
   return (
     <div className="chat-header">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
         <div className="bot-avatar">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="#F28627">
+          <svg className="w-5 h-5 md:w-7 md:h-7" viewBox="0 0 28 28" fill="#F28627">
             <circle cx="14" cy="10" r="6" stroke="#F28627" fill="none" strokeWidth="2"/>
             <rect x="8" y="16" width="12" height="8" rx="2" stroke="#F28627" fill="none" strokeWidth="2"/>
             <circle cx="9" cy="9" r="2" fill="#F28627"/>

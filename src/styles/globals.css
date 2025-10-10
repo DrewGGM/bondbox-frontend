@@ -59,22 +59,66 @@
   /* Chat specific styles */
   .chat-header {
     background: linear-gradient(135deg, var(--accent-bright), var(--accent-warn));
-    padding: 20px 24px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: white;
   }
 
+  @media (min-width: 768px) {
+    .chat-header {
+      padding: 20px 24px;
+    }
+  }
+
   .bot-avatar {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     background: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 768px) {
+    .bot-avatar {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .bot-details {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .bot-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .bot-name {
+      font-size: 16px;
+    }
+  }
+
+  .bot-status {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.95;
+  }
+
+  @media (min-width: 768px) {
+    .bot-status {
+      font-size: 13px;
+    }
   }
 
   .status-dot {
@@ -183,5 +227,15 @@
     background: var(--accent-bright);
     color: white;
     border-color: var(--accent-bright);
+  }
+
+  /* Scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

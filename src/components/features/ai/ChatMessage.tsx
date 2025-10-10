@@ -43,12 +43,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   return (
     <div
-      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''} max-w-[80%] ${
+      className={`flex gap-2 md:gap-3 ${isUser ? 'flex-row-reverse' : ''} max-w-[95%] sm:max-w-[85%] md:max-w-[80%] ${
         isUser ? 'self-end' : ''
       }`}
     >
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+        className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0 ${
           isUser
             ? 'bg-secondary text-white'
             : 'bg-gradient-to-br from-primary to-primary-dark text-white'
@@ -57,9 +57,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         {isUser ? 'JS' : 'B'}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 min-w-0 flex-1">
         <div
-          className={`px-4 py-3 rounded-xl text-sm leading-relaxed ${
+          className={`px-3 py-2 md:px-4 md:py-3 rounded-xl text-xs sm:text-sm leading-relaxed break-words ${
             isUser
               ? 'bg-primary text-white rounded-br-sm'
               : 'bg-gray-100 text-gray-800 rounded-bl-sm'
