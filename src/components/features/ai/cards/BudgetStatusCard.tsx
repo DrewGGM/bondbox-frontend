@@ -46,38 +46,61 @@ export const BudgetStatusCard: React.FC<BudgetStatusCardProps> = ({ data }) => {
             }
           };
           
+          // Normalizar posibles estructuras de respuesta
+          const hasNestedBudget = (budget as any).budget;
+          const limitAmount = hasNestedBudget ? (budget as any).budget?.limit_amount ?? 0 : (budget as any).limit_amount ?? 0;
+          const currentAmount = hasNestedBudget ? (budget as any).current_spent ?? 0 : (budget as any).current_amount ?? 0;
+          const alertThreshold = hasNestedBudget ? (budget as any).budget?.alert_threshold ?? 80 : (budget as any).alert_threshold ?? 80;
+          let percentage: number = hasNestedBudget ? (budget as any).percentage_used ?? 0 : (budget as any).percentage ?? 0;
+          if ((percentage === undefined || percentage === null) && limitAmount > 0) {
+            percentage = (currentAmount / limitAmount) * 100;
+          }
+          let status: string | undefined = (budget as any).status;
+          if (!status) {
+            if (hasNestedBudget) {
+              const isOver = (budget as any).is_over_budget === true;
+              const needsAlert = (budget as any).needs_alert === true;
+              status = isOver ? 'EXCEEDED' : (needsAlert ? 'WARNING' : 'OK');
+            } else {
+              status = percentage >= 100 ? 'EXCEEDED' : (percentage >= alertThreshold ? 'WARNING' : 'OK');
+            }
+          }
+          const categoryName = hasNestedBudget
+            ? ((budget as any).budget?.category?.name ?? (budget as any).category_name ?? 'Presupuesto')
+            : ((budget as any).category_name ?? (budget as any).category?.name ?? 'Presupuesto');
+          
           return (
             <div key={index} className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-gray-900">{budget.category_name}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(budget.status)}`}>
-                  {getStatusText(budget.status)}
+                <span className="font-medium text-gray-900">{categoryName}</span>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status!)}`}>
+                  {getStatusText(status!)}
                 </span>
               </div>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Gastado:</span>
-                  <span className="font-medium">{formatCurrency(budget.current_amount)}</span>
+                  <span className="font-medium">{formatCurrency(currentAmount)}</span>
                 </div>
                 
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Límite:</span>
-                  <span className="font-medium">{formatCurrency(budget.limit_amount)}</span>
+                  <span className="font-medium">{formatCurrency(limitAmount)}</span>
                 </div>
                 
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className={`h-2 rounded-full ${
-                      budget.percentage >= 100 ? 'bg-red-500' :
-                      budget.percentage >= 80 ? 'bg-yellow-500' : 'bg-green-500'
+                      percentage >= 100 ? 'bg-red-500' :
+                      percentage >= alertThreshold ? 'bg-yellow-500' : 'bg-green-500'
                     }`}
-                    style={{ width: `${Math.min(budget.percentage, 100)}%` }}
+                    style={{ width: `${Math.min(percentage, 100)}%` }}
                   />
                 </div>
                 
                 <div className="text-right text-sm text-gray-500">
-                  {budget.percentage.toFixed(1)}% del límite
+                  {Number.isFinite(percentage) ? `${percentage.toFixed(1)}% del límite` : '0.0% del límite'}
                 </div>
               </div>
             </div>
