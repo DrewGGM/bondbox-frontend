@@ -1,6 +1,6 @@
 export type MessageType = 'user' | 'bot';
 
-export type CardType = 'task' | 'expense' | 'income' | 'inventory' | 'transaction' | 'category' | 'financial_summary' | 'transaction_list' | 'category_list' | 'budget_status' | 'category_expense' | 'budget_limits' | 'budget_exceeded' | 'email_notification';
+export type CardType = 'task' | 'expense' | 'income' | 'inventory' | 'transaction' | 'category' | 'financial_summary' | 'transaction_list' | 'category_list' | 'budget_status' | 'category_expense' | 'budget_limits' | 'budget_exceeded' | 'email_notification' | 'product' | 'inventory_list' | 'shopping_list' | 'product_search' | 'low_stock' | 'expiring_products' | 'group_members' | 'task_created' | 'task_list' | 'task_updated';
 
 export interface Message {
   id: string;
@@ -15,7 +15,7 @@ export interface Message {
 
 export interface MessageCard {
   type: CardType;
-  data: TaskCardData | ExpenseCardData | IncomeCardData | InventoryCardData | TransactionCardData | CategoryCardData | FinancialSummaryCardData | TransactionListCardData | CategoryListCardData | BudgetStatusCardData | CategoryExpenseCardData | BudgetLimitsCardData | BudgetExceededCardData | EmailNotificationCardData;
+  data: TaskCardData | ExpenseCardData | IncomeCardData | InventoryCardData | TransactionCardData | CategoryCardData | FinancialSummaryCardData | TransactionListCardData | CategoryListCardData | BudgetStatusCardData | CategoryExpenseCardData | BudgetLimitsCardData | BudgetExceededCardData | EmailNotificationCardData | ProductCardData | InventoryListCardData | ShoppingListCardData | ProductSearchCardData | LowStockCardData | ExpiringProductsCardData | GroupMembersCardData | TaskCreatedCardData | TaskListCardData | TaskUpdatedCardData;
 }
 
 export interface TaskCardData {
@@ -193,4 +193,116 @@ export interface EmailNotificationCardData {
   message: string;
   email_sent_to: string;
   subject?: string;
+}
+
+// Tipos para inventario
+export interface ProductCardData {
+  id: number;
+  name: string;
+  quantity: number;
+  expiryDate: string;
+  category: string;
+  price: string | number;
+  idInventory?: number | null;
+}
+
+export interface InventoryListCardData {
+  success: boolean;
+  productos: ProductCardData[];
+  total: number;
+  group_id: string;
+  categoria?: string;
+}
+
+export interface ShoppingListCardData {
+  success: boolean;
+  items: Array<{
+    id: number;
+    productId: number | null;
+    quantity: number;
+    state: 'Pendiente' | 'Completo';
+  }>;
+  total: number;
+  estado: 'pendientes' | 'completados' | 'todos';
+  group_id: string;
+}
+
+export interface ProductSearchCardData {
+  success: boolean;
+  productos_encontrados: ProductCardData[];
+  total: number;
+  busqueda: string;
+  group_id: string;
+}
+
+export interface LowStockCardData {
+  success: boolean;
+  productos_bajo_stock: ProductCardData[];
+  total: number;
+  group_id: string;
+}
+
+export interface ExpiringProductsCardData {
+  success: boolean;
+  productos_vencidos: ProductCardData[];
+  total: number;
+  group_id: string;
+}
+
+// Tipos para grupos y tareas
+export interface GroupMember {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+export interface GroupMembersCardData {
+  success: boolean;
+  miembros: GroupMember[];
+  total: number;
+  group_id: string;
+}
+
+export interface TaskCreatedCardData {
+  success: boolean;
+  tarea_creada: {
+    id: number;
+    status: string;
+  };
+  asignada_a: string;
+  user_id: string;
+  group_id: string;
+}
+
+export interface TaskItem {
+  id: number;
+  title: string;
+  status: 'pendiente' | 'completada' | 'en_progreso';
+  priority: 'alta' | 'media' | 'baja';
+  deadline: string;
+  miembro?: string;
+  user_id?: string;
+}
+
+export interface TaskListCardData {
+  success: boolean;
+  tareas_pendientes?: TaskItem[];
+  tareas?: TaskItem[];
+  total: number;
+  group_id: string;
+  miembro?: string;
+  user_id?: string;
+}
+
+export interface TaskUpdatedCardData {
+  success: boolean;
+  tarea_actualizada: {
+    success: boolean;
+    message: string;
+  };
+  nuevo_estado?: string;
+  asignada_a?: string;
+  user_id?: string;
+  task_id: number;
+  group_id: string;
 }

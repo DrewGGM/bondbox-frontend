@@ -6,7 +6,17 @@ import type {
   TransactionListCardData, 
   CategoryListCardData, 
   BudgetStatusCardData,
-  EmailNotificationCardData
+  EmailNotificationCardData,
+  ProductCardData,
+  InventoryListCardData,
+  ShoppingListCardData,
+  ProductSearchCardData,
+  LowStockCardData,
+  ExpiringProductsCardData,
+  GroupMembersCardData,
+  TaskCreatedCardData,
+  TaskListCardData,
+  TaskUpdatedCardData
 } from '@/types/ai.types';
 import { TransactionCard } from './cards/TransactionCard';
 import { CategoryCard } from './cards/CategoryCard';
@@ -18,6 +28,16 @@ import { CategoryExpenseCard } from './cards/CategoryExpenseCard';
 import { BudgetLimitsCard } from './cards/BudgetLimitsCard';
 import { BudgetExceededCard } from './cards/BudgetExceededCard';
 import { EmailNotificationCard } from './cards/EmailNotificationCard';
+import { ProductCard } from './cards/ProductCard';
+import { InventoryListCard } from './cards/InventoryListCard';
+import { ShoppingListCard } from './cards/ShoppingListCard';
+import { ProductSearchCard } from './cards/ProductSearchCard';
+import { LowStockCard } from './cards/LowStockCard';
+import { ExpiringProductsCard } from './cards/ExpiringProductsCard';
+import { GroupMembersCard } from './cards/GroupMembersCard';
+import { TaskCreatedCard } from './cards/TaskCreatedCard';
+import { TaskListCard } from './cards/TaskListCard';
+import { TaskUpdatedCard } from './cards/TaskUpdatedCard';
 
 interface MCPDataRendererProps {
   data: any;
@@ -49,6 +69,56 @@ export const MCPDataRenderer: React.FC<MCPDataRendererProps> = ({ data }) => {
   // Detectar notificación de email (respuesta de envío de correo)
   if (data.success !== undefined && data.message && data.email_sent_to) {
     return <EmailNotificationCard data={data as EmailNotificationCardData} />;
+  }
+
+  // Detectar lista de compras
+  if (data.success !== undefined && data.items && Array.isArray(data.items) && data.estado) {
+    return <ShoppingListCard data={data as ShoppingListCardData} />;
+  }
+
+  // Detectar productos con stock bajo
+  if (data.success !== undefined && data.productos_bajo_stock && Array.isArray(data.productos_bajo_stock)) {
+    return <LowStockCard data={data as LowStockCardData} />;
+  }
+
+  // Detectar productos por vencer
+  if (data.success !== undefined && data.productos_vencidos && Array.isArray(data.productos_vencidos)) {
+    return <ExpiringProductsCard data={data as ExpiringProductsCardData} />;
+  }
+
+  // Detectar búsqueda de productos
+  if (data.success !== undefined && data.productos_encontrados && Array.isArray(data.productos_encontrados) && data.busqueda) {
+    return <ProductSearchCard data={data as ProductSearchCardData} />;
+  }
+
+  // Detectar lista de inventario (productos generales)
+  if (data.success !== undefined && data.productos && Array.isArray(data.productos) && data.total !== undefined) {
+    return <InventoryListCard data={data as InventoryListCardData} />;
+  }
+
+  // Detectar producto individual agregado
+  if (data.success !== undefined && data.producto_agregado && data.producto_agregado.id && data.producto_agregado.name) {
+    return <ProductCard data={data.producto_agregado as ProductCardData} />;
+  }
+
+  // Detectar miembros del grupo
+  if (data.success !== undefined && data.miembros && Array.isArray(data.miembros) && data.total !== undefined) {
+    return <GroupMembersCard data={data as GroupMembersCardData} />;
+  }
+
+  // Detectar tarea creada
+  if (data.crear_tarea && data.crear_tarea.success && data.crear_tarea.tarea_creada) {
+    return <TaskCreatedCard data={data.crear_tarea as TaskCreatedCardData} />;
+  }
+
+  // Detectar lista de tareas
+  if (data.success !== undefined && (data.tareas_pendientes || data.tareas) && Array.isArray(data.tareas_pendientes || data.tareas)) {
+    return <TaskListCard data={data as TaskListCardData} />;
+  }
+
+  // Detectar tarea actualizada
+  if (data.success !== undefined && data.tarea_actualizada && data.task_id) {
+    return <TaskUpdatedCard data={data as TaskUpdatedCardData} />;
   }
 
   // Detectar datos de límites excedidos (respuesta de "¿Estoy cerca de exceder algún límite de gasto?")
