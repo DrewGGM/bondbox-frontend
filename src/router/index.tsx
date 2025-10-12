@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { BondyAIPage } from '@/pages/ai/BondyAIPage';
+import { FinancePage } from '@/pages/finance/FinancePage';
 
 // Placeholder pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -31,7 +32,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/finanzas',
-    element: <PlaceholderPage title="💰 Finanzas" />,
+    element: <FinancePage />,
   },
   {
     path: '/tareas',

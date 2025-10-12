@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <header className="bg-primary-dark h-16 flex items-center justify-between px-4 md:px-6 shadow-lg sticky top-0 z-50">
@@ -20,21 +26,56 @@ export const Header: React.FC = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-2 flex-1">
-          <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2">
+          <Link 
+            to="/dashboard" 
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/dashboard') 
+                ? 'bg-primary text-white' 
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
             Dashboard
-          </a>
-          <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2">
+          </Link>
+          <Link 
+            to="/finanzas" 
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/finanzas') 
+                ? 'bg-primary text-white' 
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
             Finanzas
-          </a>
-          <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2">
+          </Link>
+          <Link 
+            to="/tareas" 
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/tareas') 
+                ? 'bg-primary text-white' 
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
             Tareas
-          </a>
-          <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2">
+          </Link>
+          <Link 
+            to="/calendario" 
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/calendario') 
+                ? 'bg-primary text-white' 
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
             Calendario
-          </a>
-          <a href="#" className="bg-primary text-white px-3 lg:px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+          </Link>
+          <Link 
+            to="/bondy-ai" 
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/bondy-ai') 
+                ? 'bg-primary text-white' 
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
             Bondy AI
-          </a>
+          </Link>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -50,21 +91,61 @@ export const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-primary-dark shadow-lg border-t border-primary/20">
           <nav className="flex flex-col p-4 gap-2">
-            <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300">
+            <Link 
+              to="/dashboard" 
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/dashboard') 
+                  ? 'bg-primary text-white' 
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Dashboard
-            </a>
-            <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300">
+            </Link>
+            <Link 
+              to="/finanzas" 
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/finanzas') 
+                  ? 'bg-primary text-white' 
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Finanzas
-            </a>
-            <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300">
+            </Link>
+            <Link 
+              to="/tareas" 
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/tareas') 
+                  ? 'bg-primary text-white' 
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Tareas
-            </a>
-            <a href="#" className="text-white/80 hover:text-white hover:bg-primary/20 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300">
+            </Link>
+            <Link 
+              to="/calendario" 
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/calendario') 
+                  ? 'bg-primary text-white' 
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Calendario
-            </a>
-            <a href="#" className="bg-primary text-white px-4 py-3 rounded-lg text-sm font-medium">
+            </Link>
+            <Link 
+              to="/bondy-ai" 
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/bondy-ai') 
+                  ? 'bg-primary text-white' 
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Bondy AI
-            </a>
+            </Link>
           </nav>
         </div>
       )}

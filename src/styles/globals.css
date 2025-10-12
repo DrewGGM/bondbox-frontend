@@ -238,4 +238,60 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Finance specific styles */
+  .finance-card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6;
+  }
+
+  .finance-summary-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+
+  .finance-content-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8;
+  }
+
+  .finance-sidebar {
+    @apply space-y-6;
+  }
+
+  /* Responsive improvements */
+  @media (max-width: 640px) {
+    .finance-card {
+      @apply p-3;
+    }
+    
+    .finance-summary-grid {
+      @apply gap-3;
+    }
+    
+    .finance-content-grid {
+      @apply gap-4;
+    }
+  }
+
+  /* Custom scrollbar for transaction list */
+  .transactions-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db #f9fafb;
+  }
+
+  .transactions-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .transactions-scroll::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 3px;
+  }
+
+  .transactions-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+
+  .transactions-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
 }
