@@ -106,5 +106,5 @@ Privado - Proyecto Académico EAM 2025
 
 ## 🔗 Enlaces
 
-- [Figma Mockups](https://www.figma.com/design/bQZ88XXXdQbPLZ5zXIdkS8/BondBox)
-- [Documentación del Proyecto](./docs/)
+- [Figma Mockups](https://www.figma.com/design/bQZ88XXXdQbPLZ5zXIdkS8/BondBox-ProyectoFinal-ElectivaBackend?node-id=103-14901&t=Z1IvupTI2Gg9zJpT-1)
+- [Documentación del Proyecto](https://docs.google.com/document/d/1I_q6LsJvKukgbA7kEg_UfmwTjA95k-0pterWRS--64Y/edit?usp=sharing)
