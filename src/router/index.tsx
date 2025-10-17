@@ -1,6 +1,9 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { BondyAIPage } from '@/pages/ai/BondyAIPage';
 import { FinancePage } from '@/pages/finance/FinancePage';
+import { LoginPage } from '@/pages/user/LoginPage';
+import { RegisterPage } from '@/pages/user/RegisterPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 // Placeholder pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -20,11 +23,15 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <PlaceholderPage title="🏠 BondBox" />,
+    element: <Navigate to="/login" replace />,
   },
   {
-    path: '/auth/login',
-    element: <PlaceholderPage title="🔐 Login" />,
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
   {
     path: '/dashboard',
@@ -53,5 +60,9 @@ export const router = createBrowserRouter([
   {
     path: '/bondy-ai',
     element: <BondyAIPage />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);

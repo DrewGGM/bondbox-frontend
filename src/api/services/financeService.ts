@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type {
   Transaction,
   CreateTransactionRequest,
@@ -14,29 +13,17 @@ import type {
   HealthCheck,
   PaginatedResponse,
 } from '@/types/finance.types';
+import httpInstance from '@/utils/httpInstance';
 
-// Base configuration
-const BASE_URL = import.meta.env.VITE_FINANCE_API_URL;
-
-if (!BASE_URL) {
-  throw new Error('VITE_FINANCE_API_URL environment variable is required');
-}
-
-const API_VERSION = 'v1';
+import credentialManager from '@/utils/credentialManager';
 
 // Create axios instance
-const financeApi = axios.create({
-  baseURL: `${BASE_URL}/api/${API_VERSION}`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const financeApi = httpInstance;
 
 // Request interceptor to add auth token
 financeApi.interceptors.request.use((config) => {
   const token =
-    localStorage.getItem('auth_token') ||
-    import.meta.env.VITE_HARDCODED_JWT_TOKEN;
+    credentialManager.token
 
   if (!token) {
     throw new Error(

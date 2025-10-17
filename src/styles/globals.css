@@ -294,4 +294,58 @@
   .transactions-scroll::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }
+
+  /* Auth form scrollbar */
+  .auth-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+
+  .auth-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .auth-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .auth-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+  }
+
+  .auth-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+}
+
+@layer utilities {
+  /* Modal animations */
+  .animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .animate-slideUp {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
