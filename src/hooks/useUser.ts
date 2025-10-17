@@ -4,10 +4,10 @@ import { useState } from "react";
 import { getErrorMessage } from "@/utils/errorHandler";
 
 export interface UseUserActions {
-    
+
     isLoading : boolean;
 
-    error : string | null
+    error : string | undefined
 
     userInfo : UserInfo | undefined
 
@@ -28,7 +28,7 @@ export const useUser = () : UseUserActions => {
 
     const [isLoading,setLoading] = useState<boolean>(false)
 
-    const [error,setError] = useState<string | null>(null)
+    const [error,setError] = useState<string | undefined>(undefined)
 
     const [userInfo,setUserInfo] = useState<UserInfo>()
 
@@ -82,7 +82,7 @@ export const useUser = () : UseUserActions => {
     }
 
     const clearError = () : void => {
-        setError(null)
+        setError(undefined)
     }
 
     return{
