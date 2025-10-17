@@ -1,6 +1,6 @@
 import { UserService , UserServiceImp } from "@/api/services/userService";
 import { CodeVerification, LoginForm, RegisterUserForm, UserInfo } from "@/types/users.types";
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import { getErrorMessage } from "@/utils/errorHandler";
 
 export interface UseUserActions {
