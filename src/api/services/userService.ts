@@ -1,11 +1,11 @@
 import type { RegisterUserForm ,LoginForm, CodeVerification,UserInfo, OtpResponse } from "@/types/users.types";
 import httpInstance from "@/utils/httpInstance";
-import handler from "@/utils/errorHttpHandler";
+import apiErrorHandler from "@/utils/apiErrorHandler";
 import credentialManager from "@/utils/credentialManager";
 
 export interface UserService{
-    login (data : LoginForm):void
-    register (data : RegisterUserForm) : void
+    login (data : LoginForm): Promise<void>
+    register (data : RegisterUserForm) : Promise<void>
     verifyOtp (data : CodeVerification) : Promise<OtpResponse>
     userInfo () : Promise<UserInfo>
 }
@@ -15,14 +15,14 @@ export class UserServiceImp implements UserService{
         try {
             await httpInstance.post("/users/login",data)
         } catch (error : any) {
-            handler(error);
+            throw apiErrorHandler(error);
         }
     }
     async register(data: RegisterUserForm): Promise<void> {
         try {
             await httpInstance.post("/users/register",data)
         } catch (error : any) {
-            handler(error);
+            throw apiErrorHandler(error);
         }
     }
 
@@ -32,7 +32,7 @@ export class UserServiceImp implements UserService{
             credentialManager.putToken(response.data.token)
             return response.data;
         } catch (error: any) {
-            throw handler(error);
+            throw apiErrorHandler(error);
         }
     }
 
@@ -45,7 +45,7 @@ export class UserServiceImp implements UserService{
             });
             return response.data;
         } catch (error: any) {
-            throw handler(error);
+            throw apiErrorHandler(error);
         }
     }
 
