@@ -15,30 +15,30 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   // ============================================================================
   '01-01-01': {
     status: 400,
-    description: 'La fecha de nacimiento esta en futuro',
-    message: 'Error: La fecha de nacimiento es inválida',
+    description: 'La fecha de nacimiento esta en el futuro',
+    message: 'Error: La fecha de nacimiento es invalida',
   },
   '01-01-02': {
     status: 409,
     description: 'Usuario ya registrado',
-    message: 'Ya estás registrado, por favor redirigete al login',
+    message: 'Ya estas registrado, porfavor redirigete al login',
   },
   '01-01-03': {
     status: 409,
-    description: 'NIT en uso',
-    message: 'Ya estas registrado con este NIT, por favor redirigete al login',
+    description: 'Nit ya en uso',
+    message: 'Ya estas registrado con este NIT, porfavor redirigete al login',
   },
   '01-01-04': {
     status: 404,
-    description: 'User con email no encontrado',
+    description: 'User con ese mail no encontrado',
     message:
-      'Este email no esta registrado en nuestro sistema, por favor contactarte con el equipo de soporte si crees que es un error',
+      'Este email no esta registrado en nuestro sistema, porfavor contactarte con el equipo de soporte si crees que es un error',
   },
   '01-01-05': {
     status: 401,
     description: 'OTP invalido',
     message:
-      'Este OTP parece incorrecto, no te preocupes aun puedes intentar escribiendolo correctamente',
+      'Este OTP parece incorrecto.. pero no se preocupes aun puedes intentar escribiendolo correctamente',
   },
   '01-01-06': {
     status: 401,
@@ -46,10 +46,15 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
     message:
       'Parece que ya has llegado al limite de intentos validos por OTP enviado, intenta generar uno nuevo',
   },
+  '01-01-07': {
+    status: 401,
+    description: 'Credenciales invalidas',
+    message: 'Contraseña o Correo Incorrecto',
+  },
   '01-02-01': {
     status: 404,
-    description: 'No se pudo encontrar el usuario autenticado',
-    message: 'Error: No pudimos recuperar tu identidad, por favor contactar a soporte',
+    description: 'No se pudo encontrar el usuario asignado',
+    message: 'Error: No pudimos recuperar tu identidad, porfavor contactar a soporte',
   },
 
   // ============================================================================
@@ -57,88 +62,88 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   // ============================================================================
   '02-01-01': {
     status: 404,
-    description: 'No se encontro el usuario en el grupo asignado',
-    message: 'USER_IP_NOT_FOUND',
+    description: 'No se encontro el usuaio en el grupo asignado',
+    message: 'No se encontró tu usuario en el grupo',
   },
   '02-01-02': {
     status: 404,
     description: 'No se encontro el grupo',
-    message: 'GROUP_NOT_FOUND',
+    message: 'El grupo no fue encontrado',
   },
   '02-01-03': {
     status: 404,
-    description: 'Grupo no encontrado con el Unique union code',
-    message: 'GROUP_NOT_FOUND_BY_CODE',
+    description: 'Grupo no encontrado con ese Unique union code',
+    message: 'No se encontró ningún grupo con ese código de unión',
   },
   '02-02-01': {
     status: 403,
-    description: 'El usuario no tiene permisos para esta accion en el grupo',
-    message: 'USER_WITH_NO_PERMISSIONS',
+    description: 'El usuario no tiene permisos para realizar esta accion en el grupo',
+    message: 'No tienes permisos para realizar esta acción en el grupo',
   },
   '02-02-02': {
     status: 403,
-    description: 'No puedes asignar rol de Admin',
-    message: 'ROL_ADMIN_NOT_ASSIGNABLE',
+    description: 'No puedes asignar',
+    message: 'No puedes asignar el rol de administrador',
   },
   '02-02-03': {
     status: 404,
     description: 'El usuario al que se quiere resignar el rol no esta en el grupo',
-    message: 'USER_NOT_ELEGIBLE_TO_REASSIGN',
+    message: 'El usuario al que intentas asignar el rol no está en el grupo',
   },
   '02-02-04': {
     status: 404,
     description: 'Rol no fue encontrado',
-    message: 'ROL_NOT_FOUND',
+    message: 'El rol especificado no fue encontrado',
   },
   '02-02-05': {
     status: 409,
     description: 'Rol en uso',
-    message: 'ROL_IN_USE',
+    message: 'No puedes eliminar un rol que está en uso',
   },
   '02-02-06': {
-    status: 403,
+    status: 409,
     description: 'Se intento eliminar el rol Admin',
-    message: 'ROL_ADMIN_NOT_REMOVABLE',
+    message: 'No puedes eliminar el rol de administrador',
   },
   '02-03-01': {
     status: 400,
     description: 'El usuario ya esta en ese grupo',
-    message: 'USER_ALREADY_IN_THE_GROUP',
+    message: 'El usuario ya es miembro de este grupo',
   },
   '02-03-02': {
     status: 400,
     description: 'El rol inicial de la invitacion no es valido o no le pertenece al grupo',
-    message: 'INVALID_INITIAL_ROL',
+    message: 'El rol de la invitación no es válido para este grupo',
   },
   '02-03-03': {
     status: 400,
     description: 'El usuario ya esta invitado',
-    message: 'USER_ALREADY_INVITED',
+    message: 'Este usuario ya tiene una invitación pendiente',
   },
   '02-03-04': {
     status: 400,
     description: 'La invitacion no le pertenece al usuario',
-    message: 'INVITATION_NOT_BELONGS_TO_USER',
+    message: 'Esta invitación no te pertenece',
   },
   '02-03-05': {
     status: 404,
     description: 'Invitacion No encontrada',
-    message: 'INVITATION_NOT_FOUND',
+    message: 'La invitación no fue encontrada',
   },
   '02-03-06': {
     status: 400,
     description: 'Invitacion en status invalido',
-    message: 'NOT_VALID_INVITATION_STATUS',
+    message: 'La invitación no está en un estado válido',
   },
   '02-04-01': {
     status: 400,
-    description: 'Usuario solicitud de union anteriormente',
-    message: 'USER_ALREADY_TRY_TO_JOIN',
+    description: 'Usuario ya mando solicitud de union anteriormente',
+    message: 'Ya has enviado una solicitud de unión anteriormente',
   },
   '02-04-02': {
     status: 404,
     description: 'La solicitud de union no existe',
-    message: 'JOIN_SOLICITATION_NOT_FOUND',
+    message: 'La solicitud de unión no fue encontrada',
   },
 
   // ============================================================================
@@ -149,152 +154,152 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   '03-01-01': {
     status: 404,
     description: 'Transaction not found',
-    message: 'Transaction not found',
+    message: 'No se encontró la transacción',
   },
   '03-01-02': {
     status: 400,
     description: 'Invalid transaction amount',
-    message: 'Invalid transaction amount',
+    message: 'El monto de la transacción no es válido',
   },
   '03-01-03': {
     status: 400,
     description: 'Invalid transaction type',
-    message: 'Invalid transaction type',
+    message: 'El tipo de transacción no es válido',
   },
   '03-01-05': {
     status: 422,
     description: 'Transaction limit exceeded',
-    message: 'Transaction limit exceeded',
+    message: 'Se ha excedido el límite de transacciones',
   },
   '03-01-06': {
     status: 409,
     description: 'Duplicate transaction',
-    message: 'Duplicate transaction',
+    message: 'Esta transacción ya existe',
   },
   '03-01-07': {
     status: 500,
     description: 'Failed to update transaction',
-    message: 'Failed to update transaction',
+    message: 'No se pudo actualizar la transacción',
   },
   '03-01-08': {
     status: 500,
     description: 'Failed to delete transaction',
-    message: 'Failed to delete transaction',
+    message: 'No se pudo eliminar la transacción',
   },
   '03-01-09': {
     status: 422,
     description: 'Insufficient balance',
-    message: 'Insufficient balance',
+    message: 'Saldo insuficiente',
   },
 
   // Category Errors (03-02-XX)
   '03-02-01': {
     status: 404,
     description: 'Category not found',
-    message: 'Category not found',
+    message: 'No se encontró la categoría',
   },
   '03-02-02': {
     status: 409,
     description: 'Category name already exists',
-    message: 'Category name already exists',
+    message: 'Ya existe una categoría con ese nombre',
   },
   '03-02-03': {
     status: 422,
     description: 'Category is in use',
-    message: 'Category is in use',
+    message: 'La categoría está en uso y no puede eliminarse',
   },
   '03-02-04': {
     status: 400,
     description: 'Invalid category type',
-    message: 'Invalid category type',
+    message: 'El tipo de categoría no es válido',
   },
   '03-02-08': {
     status: 400,
     description: 'Category type mismatch',
-    message: 'Category type mismatch',
+    message: 'El tipo de categoría no coincide',
   },
 
   // Budget Errors (03-03-XX)
   '03-03-01': {
     status: 404,
     description: 'Budget not found',
-    message: 'Budget not found',
+    message: 'No se encontró el presupuesto',
   },
   '03-03-02': {
     status: 422,
     description: 'Budget limit exceeded',
-    message: 'Budget limit exceeded',
+    message: 'Se ha excedido el límite del presupuesto',
   },
   '03-03-03': {
     status: 409,
     description: 'Budget already exists for this category',
-    message: 'Budget already exists for this category',
+    message: 'Ya existe un presupuesto para esta categoría',
   },
   '03-03-04': {
     status: 400,
     description: 'Invalid budget amount',
-    message: 'Invalid budget amount',
+    message: 'El monto del presupuesto no es válido',
   },
   '03-03-05': {
     status: 500,
     description: 'Invalid budget period',
-    message: 'Invalid budget period',
+    message: 'El período del presupuesto no es válido',
   },
   '03-03-06': {
     status: 500,
     description: 'Failed to update budget',
-    message: 'Failed to update budget',
+    message: 'No se pudo actualizar el presupuesto',
   },
   '03-03-07': {
     status: 500,
     description: 'Failed to delete budget',
-    message: 'Failed to delete budget',
+    message: 'No se pudo eliminar el presupuesto',
   },
   '03-03-08': {
     status: 400,
     description: 'Invalid alert threshold',
-    message: 'Invalid alert threshold',
+    message: 'El umbral de alerta no es válido',
   },
 
   // Report Errors (03-04-XX)
   '03-04-02': {
     status: 400,
     description: 'Invalid report period',
-    message: 'Invalid report period',
+    message: 'El período del reporte no es válido',
   },
 
   // Export Errors (03-05-XX)
   '03-05-01': {
     status: 400,
     description: 'Export format not supported',
-    message: 'Export format not supported',
+    message: 'El formato de exportación no es compatible',
   },
 
   // General Finance Errors (03-06-XX)
   '03-06-01': {
     status: 404,
     description: 'Group not found',
-    message: 'Group not found',
+    message: 'No se encontró el grupo',
   },
   '03-06-02': {
     status: 403,
     description: 'User does not belong to this group',
-    message: 'User does not belong to this group',
+    message: 'No perteneces a este grupo',
   },
   '03-06-03': {
     status: 400,
     description: 'Invalid currency',
-    message: 'Invalid currency',
+    message: 'La moneda no es válida',
   },
   '03-06-05': {
     status: 400,
     description: 'Transaction date cannot be in the future',
-    message: 'Transaction date cannot be in the future',
+    message: 'La fecha de la transacción no puede ser futura',
   },
   '03-06-06': {
     status: 422,
     description: 'Period is closed for modifications',
-    message: 'Period is closed for modifications',
+    message: 'El período está cerrado y no se pueden hacer modificaciones',
   },
 
   // ============================================================================
@@ -304,33 +309,33 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
     status: 400,
     description: 'Missing or invalid query field in the request body',
     message:
-      "The Bondy service could not process your request. The field 'query' is required.",
+      'El servicio Bondy no pudo procesar tu solicitud. El campo consulta es requerido.',
   },
   '04-01-02': {
     status: 500,
     description: 'Internal error while processing the request in Bondy service',
     message:
-      'The Bondy service encountered an unexpected error. Please try again later or contact support.',
+      'El servicio Bondy encontró un error inesperado. Por favor intenta más tarde o contacta a soporte.',
   },
   '04-01-03': {
     status: 401,
     description: 'Missing or invalid Authorization header',
-    message: 'Authorization header is required. Format: Bearer <token>',
+    message: 'Se requiere autorización. Formato: Bearer <token>',
   },
   '04-01-04': {
     status: 400,
     description: "Missing or invalid group_id field in the request body",
-    message: "The field 'group_id' is required.",
+    message: "El campo 'group_id' es requerido.",
   },
   '04-01-05': {
     status: 401,
     description: 'Invalid token format',
-    message: 'Invalid token format',
+    message: 'Formato de token inválido',
   },
   '04-01-06': {
     status: 401,
-    description: 'Token has expired',
-    message: 'Expired token',
+    description: 'Expired token',
+    message: 'El token ha expirado',
   },
 
   // ============================================================================
@@ -342,13 +347,13 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
     status: 422,
     description: 'Error Al prosesar la entidad, no coincide con la espera o falta campos',
     message:
-      'Error: Los datos de tu solicitud no se enviaron correctamente, por favor intentarlo mas tarde o ponerte en contacto con soporte',
+      'Error: Los datos de tu solicitud no se enviaron Correctamente , Porvafor intentarlo mas tarde o ponerte en contacto con soporte',
   },
   '99-01-02': {
     status: 422,
-    description: 'Error Al deserializar la entidad, sintaxis incorrecta de JSON',
+    description: 'Error Al deserializar la entidad, sintaxis incorrecta de JSON ',
     message:
-      'Error: Los datos de tu solicitud no se enviaron correctamente, por favor intentarlo mas tarde o ponerte en contacto con soporte',
+      'Error: Los datos de tu solicitud no se enviaron Correctamente , Porvafor intentarlo mas tarde o ponerte en contacto con soporte',
   },
   '99-01-03': {
     status: 422,
@@ -363,9 +368,9 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
     message: 'No autorizado - Token requerido',
   },
   '99-02-03': {
-    status: 401,
-    description: 'Error en token',
-    message: 'Authentication failed',
+    status: 500,
+    description: 'Error en transacción',
+    message: 'La transacción falló',
   },
 
   // Database & Connection Errors (99-03-XX)
@@ -377,21 +382,21 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   '99-03-02': {
     status: 502,
     description: 'No se pudo connectar a una api del sistema',
-    message: 'CONNECT_MICRO_ERROR',
+    message: 'Error al conectar con el servicio. Por favor intenta más tarde',
   },
   '99-03-03': {
     status: 400,
     description: 'Tipo de dato inválido',
-    message: 'Invalid data type',
+    message: 'El tipo de dato enviado no es válido',
   },
   '99-03-04': {
     status: 400,
     description: 'Longitud inválida',
-    message: 'Invalid field length',
+    message: 'La longitud del campo no es válida',
   },
   '99-03-05': {
     status: 408,
-    description: 'Request timeout',
+    description: 'Time out',
     message: 'La solicitud está tardando demasiado. Por favor intenta nuevamente.',
   },
 
@@ -399,12 +404,12 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   '99-04-01': {
     status: 401,
     description: 'No autorizado',
-    message: 'Not authorized',
+    message: 'No tienes autorización para realizar esta acción',
   },
   '99-04-02': {
     status: 401,
     description: 'Token inválido',
-    message: 'Invalid authentication token',
+    message: 'El token de autenticación no es válido',
   },
 };
 

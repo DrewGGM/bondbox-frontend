@@ -2,10 +2,10 @@ export interface RegisterUserForm {
     email: string,
     password:string,
     full_name:string,
-    image_profile_url: URL,
+    image_profile_url: URL | null,
     nit: string,
     phone_number: string,
-    birthday: Date
+    birthday: string  // Format: YYYY-MM-DD (e.g., "1995-05-20")
 }
 
 export interface LoginForm {
@@ -21,10 +21,10 @@ export interface CodeVerification {
 export interface UserInfo {
     email: string,
     full_name:string,
-    image_profile_url: URL,
+    image_profile_url: URL | null,
     nit: string,
     phone_number: string,
-    birthday: Date
+    birthday: string  // Format: YYYY-MM-DD (e.g., "1995-05-20")
 }
 
 export interface OtpResponse{
