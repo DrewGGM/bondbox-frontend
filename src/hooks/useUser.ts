@@ -1,7 +1,7 @@
 import { UserService , UserServiceImp } from "@/api/services/userService";
 import { CodeVerification, LoginForm, RegisterUserForm, UserInfo } from "@/types/users.types";
 import { useState } from "react";
-import { getErrorMessage } from "@/utils/errorHandler";
+import { validateLogin, validateRegister, validateOtpVerification } from "@/schemas";
 
 export interface UseUserActions {
 
@@ -35,11 +35,13 @@ export const useUser = () : UseUserActions => {
     const login = async (data : LoginForm) => {
         try {
             setLoading(true)
-            await userService.login(data)
+            // Validate data before sending to service
+            const validatedData = validateLogin(data)
+            await userService.login(validatedData)
             setLoading(false)
         } catch (error:any) {
-            // error.message contains the error code (e.g., "99-02-01")
-            setError(getErrorMessage(error.message))
+            // Handle both ValidationError and ApiError
+            setError(error?.message || 'Ocurrió un error inesperado')
             setLoading(false)
         }
     }
@@ -47,11 +49,13 @@ export const useUser = () : UseUserActions => {
     const register = async (data : RegisterUserForm) => {
         try {
             setLoading(true)
-            await userService.register(data)
+            // Validate data before sending to service
+            const validatedData = validateRegister(data)
+            await userService.register(validatedData)
             setLoading(false)
         } catch (error:any) {
-            // error.message contains the error code (e.g., "01-01-02")
-            setError(getErrorMessage(error.message))
+            // Handle both ValidationError and ApiError
+            setError(error?.message || 'Ocurrió un error inesperado')
             setLoading(false)
         }
     }
@@ -59,11 +63,13 @@ export const useUser = () : UseUserActions => {
     const otpVerification = async (data : CodeVerification) => {
         try {
             setLoading(true)
-            await userService.verifyOtp(data)
+            // Validate data before sending to service
+            const validatedData = validateOtpVerification(data)
+            await userService.verifyOtp(validatedData)
             setLoading(false)
         } catch (error:any) {
-            // error.message contains the error code (e.g., "01-01-05")
-            setError(getErrorMessage(error.message))
+            // Handle both ValidationError and ApiError
+            setError(error?.message || 'Ocurrió un error inesperado')
             setLoading(false)
         }
     }
@@ -75,8 +81,8 @@ export const useUser = () : UseUserActions => {
             setUserInfo(response)
             setLoading(false)
         } catch (error:any) {
-            // error.message contains the error code
-            setError(getErrorMessage(error.message))
+            // ApiError already contains user-friendly message
+            setError(error?.message || 'Ocurrió un error inesperado')
             setLoading(false)
         }
     }

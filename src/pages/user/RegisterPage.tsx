@@ -22,10 +22,10 @@ export const RegisterPage: React.FC = () => {
       email: data.email,
       password: data.password,
       full_name: data.fullName,
-      image_profile_url: new URL('https://default-profile-image.com'), // Default profile image
+      image_profile_url: null,
       nit: data.nit,
       phone_number: data.phone,
-      birthday: data.birthDate as any // Keep date as string in format "1995-05-20"
+      birthday: data.birthDate // Format: YYYY-MM-DD (e.g., "1995-05-20")
     });
   };
 
