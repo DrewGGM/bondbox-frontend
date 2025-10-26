@@ -13,27 +13,10 @@ import type {
   HealthCheck,
   PaginatedResponse,
 } from '@/types/finance.types';
-import httpInstance from '@/utils/httpInstance';
+import { authenticatedHttpInstance } from '@/utils/httpInstance';
 
-import credentialManager from '@/utils/credentialManager';
-
-// Create axios instance
-const financeApi = httpInstance;
-
-// Request interceptor to add auth token
-financeApi.interceptors.request.use((config) => {
-  const token =
-    credentialManager.token
-
-  if (!token) {
-    throw new Error(
-      'Authentication token is required. Please check VITE_HARDCODED_JWT_TOKEN environment variable or login.'
-    );
-  }
-
-  config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// Use authenticated HTTP instance (automatically adds auth token)
+const financeApi = authenticatedHttpInstance;
 
 // Response interceptor for error handling
 financeApi.interceptors.response.use(

@@ -32,7 +32,7 @@ export const registerSchema = z.object({
     .min(1, 'El nombre completo es requerido')
     .min(3, 'El nombre debe tener al menos 3 caracteres')
     .max(100, 'El nombre no puede exceder 100 caracteres')
-    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'El nombre solo puede contener letras'),
+    .regex(/^[a-zA-Z\s]+$/, 'El nombre solo puede contener letras'),
   nit: z
     .string()
     .min(8, 'El NIT es requerido')
@@ -40,7 +40,8 @@ export const registerSchema = z.object({
     .regex(/^\d{1,10}-?\d?$/, 'Formato de NIT inválido (ej: 123456789-0)'),
   phone_number: z
     .string()
-    .min(1, 'El número de teléfono es requerido')
+    .min(10, 'El número de teléfono es requerido en un formato valido')
+    .max(10, 'El número de teléfono es requerido en un formato valido')
     .regex(/^[0-9]{10}$/, 'Formato de teléfono inválido (ej:300 000 0000)'),
   birthday: z
     .string()

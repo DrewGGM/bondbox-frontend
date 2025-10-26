@@ -2,6 +2,7 @@ import { UserService , UserServiceImp } from "@/api/services/userService";
 import { CodeVerification, LoginForm, RegisterUserForm, UserInfo } from "@/types/users.types";
 import { useState } from "react";
 import { validateLogin, validateRegister, validateOtpVerification } from "@/schemas";
+import { useAuthStore } from "@/store/authStore";
 
 export interface UseUserActions {
 
@@ -19,12 +20,16 @@ export interface UseUserActions {
 
     refreshUserInfo () : void
 
+    logout () : void
+
     clearError () : void
 }
 
 export const useUser = () : UseUserActions => {
 
     const userService : UserService = new UserServiceImp ()
+    const setAuthenticated = useAuthStore((state) => state.setAuthenticated)
+    const logoutAuth = useAuthStore((state) => state.logout)
 
     const [isLoading,setLoading] = useState<boolean>(false)
 
@@ -38,6 +43,7 @@ export const useUser = () : UseUserActions => {
             // Validate data before sending to service
             const validatedData = validateLogin(data)
             await userService.login(validatedData)
+            // Don't set authenticated here - only after OTP verification
             setLoading(false)
         } catch (error:any) {
             // Handle both ValidationError and ApiError
@@ -66,6 +72,8 @@ export const useUser = () : UseUserActions => {
             // Validate data before sending to service
             const validatedData = validateOtpVerification(data)
             await userService.verifyOtp(validatedData)
+            // Update auth store on successful OTP verification
+            setAuthenticated(true);
             setLoading(false)
         } catch (error:any) {
             // Handle both ValidationError and ApiError
@@ -87,6 +95,11 @@ export const useUser = () : UseUserActions => {
         }
     }
 
+    const logout = () : void => {
+        // Call auth store logout (clears token and updates state)
+        logoutAuth();
+    }
+
     const clearError = () : void => {
         setError(undefined)
     }
@@ -99,6 +112,7 @@ export const useUser = () : UseUserActions => {
         register,
         otpVerification,
         refreshUserInfo,
+        logout,
         clearError
     }
 

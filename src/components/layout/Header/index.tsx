@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Users, ChevronDown } from 'lucide-react';
+import { useGroupStore } from '@/store/groupStore';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { selectedGroup } = useGroupStore();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -23,6 +25,20 @@ export const Header: React.FC = () => {
           </svg>
           <span className="text-white text-lg md:text-2xl font-bold">BondBox</span>
         </div>
+
+        {/* Selected Group Display */}
+        {selectedGroup && (
+          <Link
+            to="/dashboard"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+          >
+            <Users className="w-4 h-4 text-white/80" />
+            <span className="text-white/90 text-sm font-medium truncate max-w-[150px]">
+              {selectedGroup.name}
+            </span>
+            <ChevronDown className="w-3 h-3 text-white/60" />
+          </Link>
+        )}
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-2 flex-1">
