@@ -2,11 +2,10 @@ import React from 'react';
 import { Mail, Clock, Check, X } from 'lucide-react';
 
 export enum InvitationStatus {
-  PENDING = 1,
-  ACCEPTED = 2,
+  PENDING = 0,
+  ACCEPTED = 1,
+  EXPIRED = 2,
   DECLINED = 3,
-  CANCELLED = 4,
-  EXPIRED = 5,
 }
 
 export interface Invitation {
@@ -67,22 +66,16 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             Aceptada
           </span>
         );
-      case InvitationStatus.DECLINED:
-        return (
-          <span className="px-2 py-1 rounded-md bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
-            Rechazada
-          </span>
-        );
-      case InvitationStatus.CANCELLED:
-        return (
-          <span className="px-2 py-1 rounded-md bg-gray-50 border border-gray-200 text-xs text-gray-700 font-medium">
-            Cancelada
-          </span>
-        );
       case InvitationStatus.EXPIRED:
         return (
           <span className="px-2 py-1 rounded-md bg-orange-50 border border-orange-200 text-xs text-orange-700 font-medium">
             Expirada
+          </span>
+        );
+      case InvitationStatus.DECLINED:
+        return (
+          <span className="px-2 py-1 rounded-md bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+            Rechazada
           </span>
         );
     }
