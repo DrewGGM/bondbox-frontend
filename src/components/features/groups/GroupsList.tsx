@@ -44,10 +44,10 @@ export const GroupsList: React.FC<GroupsListProps> = ({
           </svg>
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          No tienes grupos aún
+          ¿Qué esperas para formar parte de una familia?
         </h3>
         <p className="text-sm text-gray-500">
-          Crea tu primer grupo para empezar a colaborar con tu familia
+          Crea tu primer grupo o únete a uno existente
         </p>
       </div>
     );
