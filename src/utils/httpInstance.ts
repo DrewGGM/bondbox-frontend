@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_GATEWAY_URL;
+// Use runtime config if available (Docker), otherwise use build-time env
+const BASE_URL = (window as any).ENV?.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_GATEWAY_URL;
 
 const API_VERSION = 'v1';
 

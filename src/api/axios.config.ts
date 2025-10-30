@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL;
+// Use runtime config if available (Docker), otherwise use build-time env
+const API_BASE_URL = (window as any).ENV?.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_GATEWAY_URL;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

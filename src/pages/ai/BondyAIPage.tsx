@@ -40,10 +40,16 @@ export const BondyAIPage: React.FC = () => {
       addMCPResponse(response);
     } catch (error) {
       console.error('Error al consultar el agente:', error);
+
+      // Extraer mensaje de error específico
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Lo siento, hubo un error al procesar tu consulta. Por favor, intenta de nuevo.';
+
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: 'Lo siento, hubo un error al procesar tu consulta. Por favor, intenta de nuevo.',
+        content: errorMessage,
         timestamp: new Date(),
       };
       addMessage(errorResponse);

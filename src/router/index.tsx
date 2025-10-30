@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { BondyAIPage } from '@/pages/ai/BondyAIPage';
 import { FinancePage } from '@/pages/finance/FinancePage';
 import { DashboardPage } from '@/pages/groups/GroupsPage';
@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/user/RegisterPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { PublicRoute } from '@/components/auth/PublicRoute';
+import { HomeRoute } from '@/components/auth/HomeRoute';
 
 // Placeholder pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -26,7 +27,7 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/login" replace />,
+    element: <HomeRoute />,
   },
   {
     path: '/login',

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import credentialManager from '@/utils/credentialManager';
+import { useGroupStore } from '@/store/groupStore';
 
-const GROUP_ID = import.meta.env.VITE_HARDCODED_GROUP_ID;
-const JWT_TOKEN = import.meta.env.VITE_HARDCODED_JWT_TOKEN;
-const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL;
+// Use runtime config if available (Docker), otherwise use build-time env
+const API_BASE_URL = (window as any).ENV?.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_GATEWAY_URL;
 
 export interface AIQueryRequest {
   query: string;
@@ -37,13 +38,21 @@ export interface AIQueryResponse {
 export const aiService = {
   async queryAI(query: string): Promise<AIQueryResponse> {
     try {
-      if (!GROUP_ID || !JWT_TOKEN) {
-        throw new Error('Configuración de autenticación faltante. Verifica las variables de entorno VITE_HARDCODED_GROUP_ID y VITE_HARDCODED_JWT_TOKEN.');
+      // Obtener token del usuario autenticado
+      const token = credentialManager.token();
+      if (!token) {
+        throw new Error('No estás autenticado. Por favor, inicia sesión.');
+      }
+
+      // Obtener grupo seleccionado
+      const selectedGroup = useGroupStore.getState().selectedGroup;
+      if (!selectedGroup || !selectedGroup.id) {
+        throw new Error('No hay un grupo seleccionado. Por favor, selecciona un grupo desde el dashboard.');
       }
 
       const requestData: AIQueryRequest = {
         query,
-        group_id: GROUP_ID,
+        group_id: selectedGroup.id,
       };
 
       const fullURL = `${API_BASE_URL}/api/v1/query`;
@@ -51,7 +60,7 @@ export const aiService = {
       const response = await axios.post(fullURL, requestData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JWT_TOKEN}`,
+          'Authorization': `Bearer ${token}`,
         },
         timeout: 60000, // 1 minutos para permitir que el agente ejecute herramientas
       });

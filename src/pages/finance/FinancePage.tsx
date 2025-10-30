@@ -9,6 +9,7 @@ import { ExpenseChart } from '@/components/features/finance/ExpenseChart';
 import { useFinance } from '@/hooks/useFinance';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { useGroupStore } from '@/store/groupStore';
 import type {
   FilterOptions,
   TransactionFilters,
@@ -22,12 +23,28 @@ export const FinancePage: React.FC = () => {
     member: 'all',
   });
 
-  // Get groupId from environment variables
-  const groupId = import.meta.env.VITE_HARDCODED_GROUP_ID;
+  // Get groupId from selected group
+  const selectedGroup = useGroupStore((state) => state.selectedGroup);
 
-  if (!groupId) {
-    throw new Error('VITE_HARDCODED_GROUP_ID environment variable is required');
+  if (!selectedGroup) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <p className="text-yellow-800 text-lg font-medium">
+              No hay un grupo seleccionado
+            </p>
+            <p className="text-yellow-600 mt-2">
+              Por favor, selecciona un grupo desde el dashboard para ver las finanzas.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
   }
+
+  const groupId = selectedGroup.id;
 
   const {
     transactions,
