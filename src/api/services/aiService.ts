@@ -1,9 +1,9 @@
 import axios from 'axios';
 import credentialManager from '@/utils/credentialManager';
 import { useGroupStore } from '@/store/groupStore';
+import { ENDPOINTS } from '@/api/endpoints';
 
-// Use runtime config if available (Docker), otherwise use build-time env
-const API_BASE_URL = (window as any).ENV?.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_GATEWAY_URL;
+const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || (window as any).ENV?.VITE_API_GATEWAY_URL;
 
 export interface AIQueryRequest {
   query: string;
@@ -55,7 +55,7 @@ export const aiService = {
         group_id: selectedGroup.id,
       };
 
-      const fullURL = `${API_BASE_URL}/api/v1/query`;
+      const fullURL = `${API_BASE_URL}${ENDPOINTS.BONDY.QUERY}`;
 
       const response = await axios.post(fullURL, requestData, {
         headers: {

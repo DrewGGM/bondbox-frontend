@@ -1,11 +1,9 @@
 import axios from "axios";
+import { STORAGE_KEYS } from '@/config/storageKeys';
 
-// Use runtime config if available (Docker), otherwise use build-time env
-const BASE_URL = (window as any).ENV?.VITE_API_GATEWAY_URL || import.meta.env.VITE_API_GATEWAY_URL;
-
+const BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || (window as any).ENV?.VITE_API_GATEWAY_URL;
 const API_VERSION = 'v1';
 
-// Base configuration shared by all instances
 const baseConfig = {
   baseURL: `${BASE_URL}/api/${API_VERSION}`,
   timeout: 10000,
@@ -14,17 +12,12 @@ const baseConfig = {
   },
 };
 
-// HTTP instance for user/auth endpoints (login, register, OTP)
-// No auth token required
 export const userHttpInstance = axios.create(baseConfig);
-
-// HTTP instance for authenticated endpoints (groups, finance, etc.)
-// Automatically adds auth token to requests
 export const authenticatedHttpInstance = axios.create(baseConfig);
 
 authenticatedHttpInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

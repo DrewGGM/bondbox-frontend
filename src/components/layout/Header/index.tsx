@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Users, ChevronDown } from 'lucide-react';
 import { useGroupStore } from '@/store/groupStore';
+import { UserMenu } from './UserMenu';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -93,6 +94,11 @@ export const Header: React.FC = () => {
             Bondy AI
           </Link>
         </nav>
+
+        {/* User Menu - Desktop */}
+        <div className="hidden md:block">
+          <UserMenu />
+        </div>
 
         {/* Mobile Menu Button */}
         <button

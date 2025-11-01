@@ -12,7 +12,6 @@ import {
   MessageSquare,
   TrendingUp,
   Bell,
-  Award,
   ChevronRight,
 } from 'lucide-react';
 
@@ -64,10 +63,6 @@ export const HomePage: React.FC = () => {
     {
       icon: <Bell className="w-6 h-6" />,
       text: 'Notificaciones inteligentes para no olvidar nada',
-    },
-    {
-      icon: <Award className="w-6 h-6" />,
-      text: 'Sistema de recompensas que motiva a todos',
     },
     {
       icon: <Users className="w-6 h-6" />,
@@ -328,15 +323,6 @@ export const HomePage: React.FC = () => {
               <p className="text-gray-600">
                 © 2025 BondBox. Organización familiar inteligente.
               </p>
-            </div>
-
-            <div className="flex gap-4">
-              <Link to="/login" className="text-gray-600 hover:text-primary transition-colors">
-                Iniciar Sesión
-              </Link>
-              <Link to="/register" className="text-gray-600 hover:text-primary transition-colors">
-                Registrarse
-              </Link>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from '@/config/storageKeys';
 
 export interface SelectedGroup {
   id: string;
@@ -27,7 +28,7 @@ export const useGroupStore = create<GroupState>()(
       },
     }),
     {
-      name: 'bondbox-selected-group',
+      name: STORAGE_KEYS.SELECTED_GROUP,
     }
   )
 );
