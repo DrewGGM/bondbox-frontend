@@ -2,8 +2,14 @@ import type {AcceptJoinSolicitation,CreateInvitation,DeclineJoinSolicitation,Del
 import { authenticatedHttpInstance } from "@/utils/httpInstance";
 import apiErrorHandler from "@/utils/apiErrorHandler";
 
+export interface CreateGroupResponse {
+    id: string;
+    name: string;
+}
+
 export interface GroupService {
-    createGroup(name:string) : Promise<void>
+    createGroup(name:string) : Promise<CreateGroupResponse>
+    createDefaultCategories(groupId: string) : Promise<void>
     leaveGroup(idGroup:string) : Promise<void>
     getUserGroups() : Promise<GroupInformation[]>
     getUsersGroup(idGroup:string) : Promise<UsersGroupInformation[]>
@@ -37,12 +43,22 @@ export class GroupsServiceImp implements GroupService{
             throw apiErrorHandler(error);
         }
     }
-    async createGroup(name: string): Promise<void> {
+    async createGroup(name: string): Promise<CreateGroupResponse> {
         try {
-            await authenticatedHttpInstance.post("/groups/createGroup",{
+            const response = await authenticatedHttpInstance.post<CreateGroupResponse>("/groups/createGroup",{
                 "name" : name
             });
+            return response.data;
         } catch (error: any) {
+            throw apiErrorHandler(error);
+        }
+    }
+
+    async createDefaultCategories(groupId: string): Promise<void> {
+        try {
+            await authenticatedHttpInstance.post(`/groups/${groupId}/categories/default`);
+        } catch (error: any) {
+            console.error('Error creating default categories:', error);
             throw apiErrorHandler(error);
         }
     }

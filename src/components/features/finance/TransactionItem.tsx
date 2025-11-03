@@ -1,13 +1,15 @@
 import React from 'react';
+import { Trash2 } from 'lucide-react';
 import type { Transaction } from '@/types/finance.types';
 import { financeUtils } from '@/api/services/financeService';
 
 interface TransactionItemProps {
   transaction: Transaction;
   onClick?: () => void;
+  onDelete?: () => void;
 }
 
-export const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onClick }) => {
+export const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onClick, onDelete }) => {
   const getCategoryIcon = (categoryName: string) => {
     return financeUtils.getCategoryIcon(categoryName);
   };
@@ -61,13 +63,21 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, o
     return financeUtils.getRelativeDate(dateString);
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.();
+  };
+
+  // Safe access to category with fallback
+  const categoryName = transaction.category?.name || 'Sin categoría';
+
   return (
     <div
-      className="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+      className="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
-      <div className={`w-11 h-11 ${getCategoryBg(transaction.category.name)} rounded-lg flex items-center justify-center mr-4 text-lg flex-shrink-0`}>
-        {getCategoryIcon(transaction.category.name)}
+      <div className={`w-11 h-11 ${getCategoryBg(categoryName)} rounded-lg flex items-center justify-center mr-4 text-lg flex-shrink-0`}>
+        {getCategoryIcon(categoryName)}
       </div>
 
       <div className="flex-1 min-w-0">
@@ -75,19 +85,30 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, o
           {transaction.description}
         </div>
         <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-          <span>Usuario</span>
-          <span>•</span>
           <span>{formatDate(transaction.transaction_date)}</span>
-          <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoryBg(transaction.category.name)} ${getCategoryColor(transaction.category.name)}`}>
-            {transaction.category.name}
+          <span>•</span>
+          <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoryBg(categoryName)} ${getCategoryColor(categoryName)}`}>
+            {categoryName}
           </span>
         </div>
       </div>
 
-      <div className={`text-base md:text-lg font-semibold ${
-        transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'
-      }`}>
-        {formatAmount(transaction.amount, transaction.type)}
+      <div className="flex items-center gap-3">
+        <div className={`text-base md:text-lg font-semibold ${
+          transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'
+        }`}>
+          {formatAmount(transaction.amount, transaction.type)}
+        </div>
+
+        {onDelete && (
+          <button
+            onClick={handleDelete}
+            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+            title="Eliminar transacción"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </div>
   );

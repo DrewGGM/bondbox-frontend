@@ -142,14 +142,19 @@ export const useGroups = (): UseGroupsActions => {
     const createGroup = async (name: string) => {
         try {
             setLoading(true);
-            // Validate data before sending to service
             const validatedName = validateCreateGroup(name);
-            await groupService.createGroup(validatedName);
-            // Reload groups after successful creation
+
+            const createdGroup = await groupService.createGroup(validatedName);
+
+            try {
+                await groupService.createDefaultCategories(createdGroup.id);
+            } catch (categoryError: any) {
+                console.error('Error creating default categories:', categoryError);
+            }
+
             await loadGroups();
             setLoading(false);
         } catch (error: any) {
-            // Handle both ValidationError and ApiError
             setError(error?.message || 'Error al crear el grupo');
             setLoading(false);
         }

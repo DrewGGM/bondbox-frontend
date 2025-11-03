@@ -1,13 +1,16 @@
 import React from 'react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import type { BudgetStatus } from '@/types/finance.types';
 import { financeUtils } from '@/api/services/financeService';
 
 interface BudgetCardProps {
   budgetStatuses: BudgetStatus[];
-  onEdit?: () => void;
+  onEdit?: (budget: BudgetStatus) => void;
+  onNew?: () => void;
+  onDelete?: (budget: BudgetStatus) => void;
 }
 
-export const BudgetCard: React.FC<BudgetCardProps> = ({ budgetStatuses, onEdit }) => {
+export const BudgetCard: React.FC<BudgetCardProps> = ({ budgetStatuses, onEdit, onNew, onDelete }) => {
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'bg-red-500';
     if (percentage >= 75) return 'bg-orange-500';
@@ -26,12 +29,15 @@ export const BudgetCard: React.FC<BudgetCardProps> = ({ budgetStatuses, onEdit }
         <h3 className="text-base md:text-lg font-semibold text-gray-900">
           Presupuesto del Mes
         </h3>
-        <button
-          onClick={onEdit}
-          className="text-sm text-primary hover:text-primary-dark transition-colors"
-        >
-          Editar
-        </button>
+        {onNew && (
+          <button
+            onClick={onNew}
+            className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Nuevo
+          </button>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -41,26 +47,51 @@ export const BudgetCard: React.FC<BudgetCardProps> = ({ budgetStatuses, onEdit }
             <p>No hay presupuestos configurados</p>
           </div>
         ) : (
-          budgetStatuses.map((budgetStatus) => {
-            const percentage = budgetStatus.percentage_used;
-            
-            return (
-              <div key={budgetStatus.budget.id} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">
-                      {financeUtils.getCategoryIcon(budgetStatus.budget.category.name)}
-                    </span>
-                    <span className="text-sm md:text-base text-gray-900">
-                      {budgetStatus.budget.category.name}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm md:text-base font-semibold text-gray-900">
-                      ${budgetStatus.current_spent.toLocaleString()}
+          budgetStatuses
+            .filter(budgetStatus => budgetStatus && budgetStatus.budget && budgetStatus.budget.category)
+            .map((budgetStatus) => {
+              const percentage = budgetStatus.percentage_used;
+              const categoryName = budgetStatus.budget.category?.name || 'Sin categoría';
+
+              return (
+                <div key={budgetStatus.budget.id} className="space-y-2 group">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-lg">
+                        {financeUtils.getCategoryIcon(categoryName)}
+                      </span>
+                      <span className="text-sm md:text-base text-gray-900">
+                        {categoryName}
+                      </span>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      de ${budgetStatus.budget.limit_amount.toLocaleString()}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="text-sm md:text-base font-semibold text-gray-900">
+                        ${budgetStatus.current_spent.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        de ${budgetStatus.budget.limit_amount.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {onEdit && (
+                        <button
+                          onClick={() => onEdit(budgetStatus)}
+                          className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="Editar presupuesto"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          onClick={() => onDelete(budgetStatus)}
+                          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Eliminar presupuesto"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

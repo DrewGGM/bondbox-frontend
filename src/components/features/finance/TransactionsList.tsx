@@ -5,12 +5,14 @@ import { TransactionItem } from './TransactionItem';
 interface TransactionsListProps {
   transactions: Transaction[];
   onTransactionClick?: (transaction: Transaction) => void;
+  onTransactionDelete?: (transaction: Transaction) => void;
   loading?: boolean;
 }
 
-export const TransactionsList: React.FC<TransactionsListProps> = ({ 
-  transactions, 
+export const TransactionsList: React.FC<TransactionsListProps> = ({
+  transactions,
   onTransactionClick,
+  onTransactionDelete,
   loading = false
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'chart'>('list');
@@ -65,6 +67,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
                   key={transaction.id}
                   transaction={transaction}
                   onClick={() => onTransactionClick?.(transaction)}
+                  onDelete={() => onTransactionDelete?.(transaction)}
                 />
               ))}
             </div>
