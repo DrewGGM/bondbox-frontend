@@ -1,12 +1,13 @@
 import React from 'react';
-import type { FilterOptions } from '@/types/finance.types';
+import type { FilterOptions, Category } from '@/types/finance.types';
 
 interface FilterBarProps {
   filters: FilterOptions;
   onFiltersChange: (filters: FilterOptions) => void;
+  categories: Category[];
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange, categories }) => {
   const handleFilterChange = (key: keyof FilterOptions, value: string) => {
     onFiltersChange({
       ...filters,
@@ -62,29 +63,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFiltersChange }
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="all">Todas</option>
-            <option value="alimentacion">Alimentación</option>
-            <option value="transporte">Transporte</option>
-            <option value="hogar">Hogar</option>
-            <option value="entretenimiento">Entretenimiento</option>
-            <option value="salud">Salud</option>
-            <option value="educacion">Educación</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
-            Miembro:
-          </label>
-          <select
-            value={filters.member}
-            onChange={(e) => handleFilterChange('member', e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="all">Todos</option>
-            <option value="juan">Juan García</option>
-            <option value="maria">María García</option>
-            <option value="pedro">Pedro García</option>
-            <option value="ana">Ana García</option>
+            {(categories || [])
+              .filter(category => category && category.id && category.name)
+              .map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))
+            }
           </select>
         </div>
       </div>

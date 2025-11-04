@@ -12,6 +12,9 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({ categories, totalExp
     return `${strokeLength} ${circumference}`;
   };
 
+  // Filter out invalid categories
+  const validCategories = (categories || []).filter(cat => cat && cat.name && cat.percentage !== undefined);
+
   const circumference = 2 * Math.PI * 70; // radius = 70
   let strokeOffset = 0;
 
@@ -36,11 +39,11 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({ categories, totalExp
             />
             
             {/* Data segments */}
-            {categories.map((category, index) => {
+            {validCategories.map((category, index) => {
               const strokeDasharray = calculateStrokeDasharray(category.percentage, circumference);
               const currentOffset = strokeOffset;
               strokeOffset -= (category.percentage / 100) * circumference;
-              
+
               return (
                 <circle
                   key={index}
@@ -72,7 +75,7 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({ categories, totalExp
         {/* Legend */}
         <div className="flex-1 min-w-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {categories.map((category, index) => (
+            {validCategories.map((category, index) => (
               <div key={index} className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-sm flex-shrink-0"
@@ -89,7 +92,7 @@ export const ExpenseChart: React.FC<ExpenseChartProps> = ({ categories, totalExp
           <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-gray-100">
             <div className="text-center">
               <div className="text-lg font-bold text-primary">
-                {categories.length}
+                {validCategories.length}
               </div>
               <div className="text-xs text-gray-500">
                 Categorías

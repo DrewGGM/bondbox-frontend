@@ -43,11 +43,6 @@ export const InvitationHistory: React.FC<InvitationHistoryProps> = ({
       color: 'bg-red-50 text-red-700 hover:bg-red-100 border-red-200',
     },
     {
-      label: 'Canceladas',
-      value: InvitationStatus.CANCELLED,
-      color: 'bg-gray-50 text-gray-600 hover:bg-gray-100 border-gray-200',
-    },
-    {
       label: 'Expiradas',
       value: InvitationStatus.EXPIRED,
       color: 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200',

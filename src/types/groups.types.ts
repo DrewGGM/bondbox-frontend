@@ -44,13 +44,13 @@ export interface PermsConfig {
 export interface RolInfo{
     id: string,
     rolName: string,
-    permsCongig : PermsConfig
+    permsConfig : PermsConfig
 }
 
 export interface RolInfoCreate{
     idGroup: string,
     rolName: string,
-    permsCongig : PermsConfig
+    permsConfig : PermsConfig
 }
 
 export interface ReasingRol{

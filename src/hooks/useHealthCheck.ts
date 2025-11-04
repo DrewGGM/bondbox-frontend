@@ -19,8 +19,8 @@ export const useHealthCheck = (intervalMs: number = 30000) => {
   const checkHealth = async () => {
     try {
       setHealthStatus(prev => ({ ...prev, status: 'checking' }));
-      
-      const response = await apiClient.get(ENDPOINTS.HEALTH);
+
+      const response = await apiClient.get(ENDPOINTS.BONDY.HEALTH);
       const data = response.data;
       
       setHealthStatus({

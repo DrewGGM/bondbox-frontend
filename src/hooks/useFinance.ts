@@ -52,22 +52,26 @@ interface UseFinanceActions {
   updateTransaction: (id: string, data: any) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   loadTransactions: (filters?: TransactionFilters) => Promise<void>;
-  
+
   // Category actions
   createCategory: (data: any) => Promise<void>;
+  updateCategory: (id: string, data: any) => Promise<void>;
+  deleteCategory: (id: string) => Promise<void>;
   loadCategories: () => Promise<void>;
-  
+
   // Budget actions
   createBudgetLimit: (data: any) => Promise<void>;
   updateBudgetLimit: (id: string, data: any) => Promise<void>;
   deleteBudgetLimit: (id: string) => Promise<void>;
   loadBudgetLimits: () => Promise<void>;
   loadBudgetStatuses: () => Promise<void>;
-  
+
   // Report actions
   loadCurrentReport: () => Promise<void>;
   loadMonthlyReport: (year?: number, month?: number) => Promise<void>;
-  
+  loadWeeklyReport: () => Promise<Report>;
+  loadYearlyReport: (year?: number) => Promise<Report>;
+
   // Utility actions
   refreshData: () => Promise<void>;
   clearError: () => void;
@@ -260,10 +264,10 @@ export const useFinance = (groupId: string): UseFinanceState & UseFinanceActions
   // Load monthly report
   const loadMonthlyReport = useCallback(async (year?: number, month?: number) => {
     if (!groupId) return;
-    
+
     setLoading('report', true);
     setError(null);
-    
+
     try {
       const report = await reportService.getMonthly(groupId, year, month);
       setState(prev => ({ ...prev, currentReport: report }));
@@ -273,6 +277,30 @@ export const useFinance = (groupId: string): UseFinanceState & UseFinanceActions
       setLoading('report', false);
     }
   }, [groupId, setLoading, setError]);
+
+  // Load weekly report
+  const loadWeeklyReport = useCallback(async (): Promise<Report> => {
+    if (!groupId) throw new Error('No group selected');
+
+    try {
+      const report = await reportService.getWeekly(groupId);
+      return report;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al cargar reporte semanal');
+    }
+  }, [groupId]);
+
+  // Load yearly report
+  const loadYearlyReport = useCallback(async (year?: number): Promise<Report> => {
+    if (!groupId) throw new Error('No group selected');
+
+    try {
+      const report = await reportService.getYearly(groupId, year);
+      return report;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al cargar reporte anual');
+    }
+  }, [groupId]);
 
   // Create transaction
   const createTransaction = useCallback(async (data: any) => {
@@ -322,14 +350,45 @@ export const useFinance = (groupId: string): UseFinanceState & UseFinanceActions
   // Create category
   const createCategory = useCallback(async (data: any) => {
     if (!groupId) return;
-    
+
     setError(null);
-    
+
     try {
       await categoryService.create({ ...data, group_id: groupId });
-      await loadCategories(); // Refresh categories
+      await loadCategories();
     } catch (error: any) {
       setError(error.response?.data?.message || 'Error al crear categoría');
+      throw error;
+    }
+  }, [groupId, loadCategories, setError]);
+
+  // Update category
+  const updateCategory = useCallback(async (id: string, data: any) => {
+    if (!groupId) return;
+
+    setError(null);
+
+    try {
+      await categoryService.update(id, data, groupId);
+      await loadCategories();
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Error al actualizar categoría');
+      throw error;
+    }
+  }, [groupId, loadCategories, setError]);
+
+  // Delete category
+  const deleteCategory = useCallback(async (id: string) => {
+    if (!groupId) return;
+
+    setError(null);
+
+    try {
+      await categoryService.delete(id, groupId);
+      await loadCategories();
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Error al eliminar categoría');
+      throw error;
     }
   }, [groupId, loadCategories, setError]);
 
@@ -408,6 +467,8 @@ export const useFinance = (groupId: string): UseFinanceState & UseFinanceActions
     deleteTransaction,
     loadTransactions,
     createCategory,
+    updateCategory,
+    deleteCategory,
     loadCategories,
     createBudgetLimit,
     updateBudgetLimit,
@@ -416,6 +477,8 @@ export const useFinance = (groupId: string): UseFinanceState & UseFinanceActions
     loadBudgetStatuses,
     loadCurrentReport,
     loadMonthlyReport,
+    loadWeeklyReport,
+    loadYearlyReport,
     refreshData,
     clearError,
   };

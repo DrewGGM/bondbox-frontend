@@ -88,7 +88,27 @@ export const otpVerificationSchema = z.object({
     .email('Formato de correo electrónico inválido'),
 });
 
+/**
+ * Update Password Schema
+ */
+export const updatePasswordSchema = z.object({
+  old_password: z
+    .string()
+    .min(1, 'La contraseña actual es requerida')
+    .min(8, 'La contraseña actual debe tener al menos 8 caracteres'),
+  new_password: z
+    .string()
+    .min(1, 'La nueva contraseña es requerida')
+    .min(8, 'La nueva contraseña debe tener al menos 8 caracteres')
+    .regex(/[A-Za-z]/, 'La nueva contraseña debe contener al menos una letra')
+    .regex(/[0-9]/, 'La nueva contraseña debe contener al menos un número'),
+}).refine((data) => data.old_password !== data.new_password, {
+  message: 'La nueva contraseña debe ser diferente de la contraseña actual',
+  path: ['new_password'],
+});
+
 // Export types inferred from schemas
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 export type RegisterSchemaType = z.infer<typeof registerSchema>;
 export type OtpVerificationSchemaType = z.infer<typeof otpVerificationSchema>;
+export type UpdatePasswordSchemaType = z.infer<typeof updatePasswordSchema>;

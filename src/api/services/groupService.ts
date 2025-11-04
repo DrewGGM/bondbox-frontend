@@ -2,8 +2,14 @@ import type {AcceptJoinSolicitation,CreateInvitation,DeclineJoinSolicitation,Del
 import { authenticatedHttpInstance } from "@/utils/httpInstance";
 import apiErrorHandler from "@/utils/apiErrorHandler";
 
+export interface CreateGroupResponse {
+    id: string;
+    name: string;
+}
+
 export interface GroupService {
-    createGroup(name:string) : Promise<void>
+    createGroup(name:string) : Promise<CreateGroupResponse>
+    createDefaultCategories(groupId: string) : Promise<void>
     leaveGroup(idGroup:string) : Promise<void>
     getUserGroups() : Promise<GroupInformation[]>
     getUsersGroup(idGroup:string) : Promise<UsersGroupInformation[]>
@@ -32,17 +38,27 @@ export interface GroupService {
 export class GroupsServiceImp implements GroupService{
     async declineJoinSolicitation(data: DeclineJoinSolicitation): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/joinSolicitations/unionByCode//decline/${data.id}`);
+            await authenticatedHttpInstance.post(`/groups/joinSolicitations/decline/${data.id}`);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
     }
-    async createGroup(name: string): Promise<void> {
+    async createGroup(name: string): Promise<CreateGroupResponse> {
         try {
-            await authenticatedHttpInstance.post("/groups/createGroup",{
+            const response = await authenticatedHttpInstance.post<CreateGroupResponse>("/groups/createGroup",{
                 "name" : name
             });
+            return response.data;
         } catch (error: any) {
+            throw apiErrorHandler(error);
+        }
+    }
+
+    async createDefaultCategories(groupId: string): Promise<void> {
+        try {
+            await authenticatedHttpInstance.post(`/groups/${groupId}/categories/default`);
+        } catch (error: any) {
+            console.error('Error creating default categories:', error);
             throw apiErrorHandler(error);
         }
     }
@@ -71,14 +87,14 @@ export class GroupsServiceImp implements GroupService{
     }
     async renameGroup(data: RenameGroup): Promise<void> {
         try {
-            await authenticatedHttpInstance.post("/groups/rename",data);
+            await authenticatedHttpInstance.put("/groups/rename",data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
     }
     async createRol(data: RolInfoCreate): Promise<void> {
         try {
-            await authenticatedHttpInstance.post("/groups/createGroup",data);
+            await authenticatedHttpInstance.post("/groups/roles",data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
@@ -93,14 +109,14 @@ export class GroupsServiceImp implements GroupService{
     }
     async reasingRol(data: ReasingRol): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/roles/reassign`,data);
+            await authenticatedHttpInstance.put(`/groups/roles/reassign`,data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
     }
     async deleteRol(data: DeleteRolPetition): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/roles`,data);
+            await authenticatedHttpInstance.delete(`/groups/roles`, { data });
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
@@ -114,14 +130,14 @@ export class GroupsServiceImp implements GroupService{
     }
     async cancelJoinSolicitation(id: string): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/joinSolicitations/cancel/${id}`);
+            await authenticatedHttpInstance.post(`/groups/join-solicitations/cancel/${id}`);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
     }
     async acceptJoinSolicitation(data: AcceptJoinSolicitation): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/joinSolicitations/accept`,data);
+            await authenticatedHttpInstance.post(`/groups/join-solicitations/accept`,data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }

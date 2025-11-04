@@ -9,8 +9,8 @@ export const GroupsHeader: React.FC<GroupsHeaderProps> = ({ onCreateGroup }) => 
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-          <Users className="w-5 h-5 text-blue-600" />
+        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+          <Users className="w-5 h-5 text-primary" />
         </div>
         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
           Mis Grupos

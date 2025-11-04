@@ -1,33 +1,40 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import {
   DashboardHeader,
   GroupsList,
   InvitationsList,
   InvitationHistory,
+  JoinSolicitationsList,
+  JoinSolicitationHistory,
   CreateGroupModal,
   JoinGroupModal,
   Group,
   Invitation,
   InvitationStatus,
+  JoinSolicitation,
+  JoinSolicitationStatus,
 } from '@/components/features/groups';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { useGroupStore } from '@/store/groupStore';
-import { History } from 'lucide-react';
+import { History, Search } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
 import { useGroups } from '@/hooks/useGroups';
 
 export const DashboardPage: React.FC = () => {
-
+  const navigate = useNavigate();
   const { selectedGroup, setSelectedGroup } = useGroupStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showInvitationHistory, setShowInvitationHistory] = useState(false);
+  const [showJoinSolicitationHistory, setShowJoinSolicitationHistory] = useState(false);
+  const [groupSearchQuery, setGroupSearchQuery] = useState('');
 
   // Track operations to show appropriate success messages
   const [operationInProgress, setOperationInProgress] = useState<
-    'creating' | 'joining' | 'accepting' | 'declining' | null
+    'creating' | 'joining' | 'accepting' | 'declining' | 'cancelling' | null
   >(null);
   const [pendingGroupName, setPendingGroupName] = useState<string>('');
 
@@ -38,10 +45,12 @@ export const DashboardPage: React.FC = () => {
     error,
     groups: groupsData,
     invitations: invitationsData,
+    joinSolicitations: joinSolicitationsData,
     createGroup: createGroupAction,
     joinGroupByCode,
     acceptInvitation: acceptInvitationAction,
     declineInvitation: declineInvitationAction,
+    cancelJoinSolicitation: cancelJoinSolicitationAction,
     clearError,
   } = useGroups();
 
@@ -104,6 +113,18 @@ export const DashboardPage: React.FC = () => {
     }
   }, [operationInProgress, isLoading, error]);
 
+  // Handle cancel solicitation success/error
+  useEffect(() => {
+    if (operationInProgress === 'cancelling' && !isLoading) {
+      if (!error) {
+        toast.success('Solicitud cancelada exitosamente');
+      } else {
+        toast.error(error);
+      }
+      setOperationInProgress(null);
+    }
+  }, [operationInProgress, isLoading, error]);
+
   // Transform API data to component format
   const groups: Group[] = useMemo(() => {
     return groupsData.map((g) => ({
@@ -112,6 +133,16 @@ export const DashboardPage: React.FC = () => {
       memberCount: g.members,
     }));
   }, [groupsData]);
+
+  // Filter groups based on search query
+  const filteredGroups = useMemo(() => {
+    if (!groupSearchQuery.trim()) {
+      return groups;
+    }
+    return groups.filter((group) =>
+      group.name.toLowerCase().includes(groupSearchQuery.toLowerCase())
+    );
+  }, [groups, groupSearchQuery]);
 
   const invitations: Invitation[] = useMemo(() => {
     return invitationsData.map((inv) => ({
@@ -127,6 +158,17 @@ export const DashboardPage: React.FC = () => {
       fromUserName: undefined, // API doesn't provide this yet
     }));
   }, [invitationsData]);
+
+  const joinSolicitations: JoinSolicitation[] = useMemo(() => {
+    return joinSolicitationsData.map((sol) => ({
+      id: sol.id,
+      idUser: sol.idUser,
+      status: sol.status as JoinSolicitationStatus,
+      groupName: sol.group.name,
+      groupId: sol.group.id,
+      createdAt: (sol as any).createdAt?.toString(),
+    }));
+  }, [joinSolicitationsData]);
 
   const userName = userInfo?.full_name || "User";
 
@@ -163,11 +205,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleViewDetails = (group: Group) => {
-    // TODO: Navigate to group detail page
-    toast(`Ver detalles de: ${group.name}`, {
-      icon: '📋',
-    });
-    // navigate(`/groups/${group.id}/details`);
+    navigate(`/grupos/${group.id}`);
   };
 
   const handleAcceptInvitation = async (invitationId: string) => {
@@ -182,6 +220,13 @@ export const DashboardPage: React.FC = () => {
     setOperationInProgress('declining');
 
     await declineInvitationAction(invitationId);
+  };
+
+  const handleCancelJoinSolicitation = async (solicitationId: string) => {
+    clearError();
+    setOperationInProgress('cancelling');
+
+    await cancelJoinSolicitationAction(solicitationId);
   };
 
   return (
@@ -244,6 +289,42 @@ export const DashboardPage: React.FC = () => {
           )}
         </div>
 
+        {/* Join Solicitations Section with History Toggle */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+                {showJoinSolicitationHistory ? 'Historial de Solicitudes' : 'Solicitudes de Unión Pendientes'}
+              </h2>
+              {!showJoinSolicitationHistory && (
+                <span className="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-full">
+                  {joinSolicitations.filter(
+                    (sol) => sol.status === JoinSolicitationStatus.PENDING
+                  ).length}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => setShowJoinSolicitationHistory(!showJoinSolicitationHistory)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+            >
+              <History className="w-4 h-4" />
+              {showJoinSolicitationHistory ? 'Ver Pendientes' : 'Ver Historial'}
+            </button>
+          </div>
+
+          {showJoinSolicitationHistory ? (
+            <JoinSolicitationHistory solicitations={joinSolicitations} loading={isLoading} />
+          ) : (
+            <JoinSolicitationsList
+              solicitations={joinSolicitations}
+              onCancel={handleCancelJoinSolicitation}
+              loading={isLoading}
+              actionLoading={isLoading}
+            />
+          )}
+        </div>
+
         {/* Groups Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -256,8 +337,27 @@ export const DashboardPage: React.FC = () => {
               </span>
             )}
           </div>
+
+          {/* Search Bar */}
+          {groups.length > 0 && (
+            <div className="mb-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={groupSearchQuery}
+                  onChange={(e) => setGroupSearchQuery(e.target.value)}
+                  placeholder="Buscar grupos por nombre..."
+                  className="block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-900 placeholder-gray-400 bg-white"
+                />
+              </div>
+            </div>
+          )}
+
           <GroupsList
-            groups={groups}
+            groups={filteredGroups}
             onViewDetails={handleViewDetails}
             onSelectGroup={handleSelectGroup}
             selectedGroupId={selectedGroup?.id}
