@@ -653,7 +653,7 @@ export const GroupDetailsPage: React.FC = () => {
           isOpen={showRenameGroupModal}
           onClose={() => setShowRenameGroupModal(false)}
           onRename={handleRenameGroup}
-          currentName={groupName}
+          currentName={currentGroup?.name || groupName}
           isLoading={isRenamingGroup}
         />
 
@@ -662,7 +662,7 @@ export const GroupDetailsPage: React.FC = () => {
           isOpen={showLeaveGroupModal}
           onClose={() => setShowLeaveGroupModal(false)}
           onConfirm={handleLeaveGroup}
-          groupName={groupName}
+          groupName={currentGroup?.name || groupName || 'este grupo'}
           isLoading={isLeavingGroup}
         />
       </main>
