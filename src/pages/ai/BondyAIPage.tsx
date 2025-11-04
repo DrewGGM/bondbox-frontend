@@ -6,7 +6,7 @@ import { ChatMessage } from '@/components/features/ai/ChatMessage';
 import { ChatInput } from '@/components/features/ai/ChatInput';
 import { QuickSuggestions } from '@/components/features/ai/QuickSuggestions';
 //import { ChatSidebar } from '@/components/features/ai/ChatSidebar';
-import { aiService } from '@/api/services/aiService';
+import { aiService, type ConversationMessage } from '@/api/services/aiService';
 import type { Message } from '@/types/ai.types';
 
 export const BondyAIPage: React.FC = () => {
@@ -22,6 +22,15 @@ export const BondyAIPage: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = async (content: string) => {
+    // Construir historial de conversación (excluir mensaje inicial de bienvenida y limitar a últimos 10 mensajes)
+    const conversationHistory: ConversationMessage[] = messages
+      .filter(msg => msg.id !== '1') // Excluir mensaje de bienvenida
+      .slice(-10) // Últimos 10 mensajes
+      .map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      }));
+
     // Agregar mensaje del usuario
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -31,11 +40,11 @@ export const BondyAIPage: React.FC = () => {
     };
     addMessage(userMessage);
 
-    // Consultar al agente de IA
+    // Consultar al agente de IA con historial de conversación
     setTyping(true);
     try {
-      const response = await aiService.queryAI(content);
-      
+      const response = await aiService.queryAI(content, conversationHistory);
+
       // Usar la nueva función para manejar respuestas MCP
       addMCPResponse(response);
     } catch (error) {

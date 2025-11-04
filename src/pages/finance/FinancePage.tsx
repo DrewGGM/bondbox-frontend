@@ -422,7 +422,7 @@ export const FinancePage: React.FC = () => {
             ? '¿Estás seguro de que deseas eliminar esta transacción?'
             : deleteType === 'budget'
             ? '¿Estás seguro de que deseas eliminar este presupuesto?'
-            : '¿Estás seguro de que deseas eliminar esta categoría? Las transacciones asociadas no se eliminarán.'
+            : '⚠️ ADVERTENCIA: Al eliminar esta categoría, también se eliminarán TODAS las transacciones asociadas. Esta acción no se puede deshacer.'
         }
         itemName={
           deleteType === 'transaction'

@@ -5,9 +5,15 @@ import { ENDPOINTS } from '@/api/endpoints';
 
 const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || (window as any).ENV?.VITE_API_GATEWAY_URL;
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 export interface AIQueryRequest {
   query: string;
   group_id: string;
+  conversation_history?: ConversationMessage[];
 }
 
 export interface Transaction {
@@ -36,7 +42,7 @@ export interface AIQueryResponse {
 }
 
 export const aiService = {
-  async queryAI(query: string): Promise<AIQueryResponse> {
+  async queryAI(query: string, conversationHistory?: ConversationMessage[]): Promise<AIQueryResponse> {
     try {
       // Obtener token del usuario autenticado
       const token = credentialManager.token();
@@ -53,6 +59,7 @@ export const aiService = {
       const requestData: AIQueryRequest = {
         query,
         group_id: selectedGroup.id,
+        conversation_history: conversationHistory,
       };
 
       const fullURL = `${API_BASE_URL}${ENDPOINTS.BONDY.QUERY}`;
