@@ -1,6 +1,6 @@
 import { GroupService, GroupsServiceImp } from "@/api/services/groupService";
 import { useGroupStore } from "@/store/groupStore";
-import { GroupInformation, InvitationResponse, JoinSolicitationResponse, RolInfoCreate, ReasingRol, RenameGroup } from "@/types/groups.types";
+import { GroupInformation, InvitationResponse, JoinSolicitationResponse, RolInfoCreate, ReasingRol } from "@/types/groups.types";
 import { useEffect, useState } from "react";
 import {
     validateCreateGroup,

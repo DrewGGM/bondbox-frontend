@@ -34,7 +34,6 @@ export const GroupDetailsPage: React.FC = () => {
     solicitations,
     invitations,
     roles,
-    error,
     createRole,
     reassignRole,
     deleteRole,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Send, Clock, Check, X } from 'lucide-react';
+import { Send, Clock, X } from 'lucide-react';
 
 export enum JoinSolicitationStatus {
   PENDING = 0,
