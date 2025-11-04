@@ -1,7 +1,9 @@
-const token = () => localStorage.getItem('auth_token')
+import { STORAGE_KEYS } from '@/config/storageKeys';
 
-const putToken = (token : string) => localStorage.setItem('auth_token',token)
+const token = () => localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
 
-const deleteToken = () => localStorage.removeItem('auth_token')
+const putToken = (token : string) => localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
 
-export default {token,putToken,deleteToken}
+const deleteToken = () => localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+
+export default {token, putToken, deleteToken}

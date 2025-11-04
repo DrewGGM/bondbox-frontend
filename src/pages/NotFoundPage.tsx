@@ -36,7 +36,7 @@ export const NotFoundPage: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/login"
+              to="/"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors duration-200"
             >
               <Home size={20} />

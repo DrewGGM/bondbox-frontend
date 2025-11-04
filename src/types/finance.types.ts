@@ -166,7 +166,7 @@ export interface FilterOptions {
   startDate?: string;
   endDate?: string;
   category: string;
-  member: string;
+  member?: string;
 }
 
 // Health Check

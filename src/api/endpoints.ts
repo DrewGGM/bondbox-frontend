@@ -1,7 +1,8 @@
 export const ENDPOINTS = {
   HEALTH: '/api/v1/health',
-  AI: {
-    QUERY: '/api/v1/query',
+  BONDY: {
+    HEALTH: '/api/v1/bondy/health',
+    QUERY: '/api/v1/bondy/query',
   },
   AUTH: {
     LOGIN: '/api/auth/login',

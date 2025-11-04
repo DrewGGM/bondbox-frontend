@@ -1,9 +1,14 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { BondyAIPage } from '@/pages/ai/BondyAIPage';
 import { FinancePage } from '@/pages/finance/FinancePage';
+import { DashboardPage } from '@/pages/groups/GroupsPage';
+import { GroupDetailsPage } from '@/pages/groups/GroupDetailsPage';
 import { LoginPage } from '@/pages/user/LoginPage';
 import { RegisterPage } from '@/pages/user/RegisterPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { PublicRoute } from '@/components/auth/PublicRoute';
+import { HomeRoute } from '@/components/auth/HomeRoute';
 
 // Placeholder pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -23,43 +28,87 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/login" replace />,
+    element: <HomeRoute />,
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <PublicRoute>
+        <LoginPage />
+      </PublicRoute>
+    ),
   },
   {
     path: '/register',
-    element: <RegisterPage />,
+    element: (
+      <PublicRoute>
+        <RegisterPage />
+      </PublicRoute>
+    ),
   },
   {
     path: '/dashboard',
-    element: <PlaceholderPage title="📊 Dashboard" />,
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/grupos/:groupId',
+    element: (
+      <ProtectedRoute>
+        <GroupDetailsPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/finanzas',
-    element: <FinancePage />,
+    element: (
+      <ProtectedRoute>
+        <FinancePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/tareas',
-    element: <PlaceholderPage title="✅ Tareas" />,
+    element: (
+      <ProtectedRoute>
+        <PlaceholderPage title="✅ Tareas" />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/calendario',
-    element: <PlaceholderPage title="📅 Calendario" />,
+    element: (
+      <ProtectedRoute>
+        <PlaceholderPage title="📅 Calendario" />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/inventario',
-    element: <PlaceholderPage title="📦 Inventario" />,
+    element: (
+      <ProtectedRoute>
+        <PlaceholderPage title="📦 Inventario" />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/bitacora',
-    element: <PlaceholderPage title="📸 Bitácora" />,
+    element: (
+      <ProtectedRoute>
+        <PlaceholderPage title="📸 Bitácora" />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/bondy-ai',
-    element: <BondyAIPage />,
+    element: (
+      <ProtectedRoute>
+        <BondyAIPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '*',
