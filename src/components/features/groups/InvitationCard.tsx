@@ -4,8 +4,9 @@ import { Mail, Clock, Check, X } from 'lucide-react';
 export enum InvitationStatus {
   PENDING = 0,
   ACCEPTED = 1,
-  EXPIRED = 2,
+  CANCELLED = 2,
   DECLINED = 3,
+  EXPIRED = 4,
 }
 
 export interface Invitation {
@@ -40,14 +41,17 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   isLoading = false,
   showActions = true,
 }) => {
-  const formatDate = (dateString: string) => {
+  const formatExpirationDate = (dateString: string, status: InvitationStatus) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = date.getTime() - now.getTime();
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-    if (days < 0) return 'Expirada';
-    if (days === 0) return 'Expira hoy';
+    if (status === InvitationStatus.EXPIRED) {
+      return `Expiró el ${date.toLocaleDateString('es-ES')}`;
+    }
+
+    if (days <= 0) return 'Expira hoy';
     if (days === 1) return 'Expira mañana';
     return `Expira en ${days} días`;
   };
@@ -56,32 +60,37 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
     switch (status) {
       case InvitationStatus.PENDING:
         return (
-          <span className="px-2 py-1 rounded-md bg-yellow-50 border border-yellow-200 text-xs text-yellow-700 font-medium">
+          <span className="px-2 py-1 rounded-md bg-primary/10 text-xs text-primary font-medium">
             Pendiente
           </span>
         );
       case InvitationStatus.ACCEPTED:
         return (
-          <span className="px-2 py-1 rounded-md bg-green-50 border border-green-200 text-xs text-green-700 font-medium">
+          <span className="px-2 py-1 rounded-md bg-green-100 text-xs text-green-700 font-medium">
             Aceptada
           </span>
         );
-      case InvitationStatus.EXPIRED:
+      case InvitationStatus.CANCELLED:
         return (
-          <span className="px-2 py-1 rounded-md bg-orange-50 border border-orange-200 text-xs text-orange-700 font-medium">
-            Expirada
+          <span className="px-2 py-1 rounded-md bg-gray-100 text-xs text-gray-600 font-medium">
+            Cancelada
           </span>
         );
       case InvitationStatus.DECLINED:
         return (
-          <span className="px-2 py-1 rounded-md bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+          <span className="px-2 py-1 rounded-md bg-red-100 text-xs text-red-600 font-medium">
             Rechazada
+          </span>
+        );
+      case InvitationStatus.EXPIRED:
+        return (
+          <span className="px-2 py-1 rounded-md bg-orange-100 text-xs text-orange-600 font-medium">
+            Expirada
           </span>
         );
     }
   };
 
-  const isExpired = new Date(invitation.expiresIn) < new Date();
   const isPending = invitation.status === InvitationStatus.PENDING;
 
   return (
@@ -89,8 +98,8 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3 flex-1">
           {/* Icon */}
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Mail className="w-5 h-5 text-blue-600" />
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Mail className="w-5 h-5 text-primary" />
           </div>
 
           {/* Content */}
@@ -119,12 +128,15 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
 
             {/* Dates */}
             <div className="flex flex-col gap-1 text-xs text-gray-500">
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span className={isExpired ? 'text-red-600 font-medium' : ''}>
-                  {formatDate(invitation.expiresIn)}
-                </span>
-              </div>
+              {(invitation.status === InvitationStatus.PENDING ||
+                invitation.status === InvitationStatus.EXPIRED) && (
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  <span>
+                    {formatExpirationDate(invitation.expiresIn, invitation.status)}
+                  </span>
+                </div>
+              )}
               <span className="text-xs text-gray-400">
                 Creada: {new Date(invitation.createdAt).toLocaleDateString('es-ES')}
               </span>
@@ -134,12 +146,12 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       </div>
 
       {/* Actions - Only show for pending invitations */}
-      {showActions && isPending && !isExpired && (
+      {showActions && isPending && (
         <div className="flex gap-2 mt-3">
           <button
             onClick={() => onDecline?.(invitation.id)}
             disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-4 h-4" />
             Rechazar
@@ -147,7 +159,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <button
             onClick={() => onAccept?.(invitation.id)}
             disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Check className="w-4 h-4" />
             Aceptar

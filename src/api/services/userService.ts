@@ -1,4 +1,4 @@
-import type { RegisterUserForm ,LoginForm, CodeVerification,UserInfo, OtpResponse } from "@/types/users.types";
+import type { RegisterUserForm ,LoginForm, CodeVerification,UserInfo, OtpResponse, UpdatePasswordDto } from "@/types/users.types";
 import { userHttpInstance, authenticatedHttpInstance } from "@/utils/httpInstance";
 import apiErrorHandler from "@/utils/apiErrorHandler";
 import credentialManager from "@/utils/credentialManager";
@@ -9,6 +9,7 @@ export interface UserService{
     verifyOtp (data : CodeVerification) : Promise<OtpResponse>
     userInfo () : Promise<UserInfo>
     verifyToken () : Promise<void>
+    changePassword (data : UpdatePasswordDto) : Promise<void>
 }
 
 export class UserServiceImp implements UserService{
@@ -51,6 +52,14 @@ export class UserServiceImp implements UserService{
         try {
             // Uses authenticatedHttpInstance which automatically adds auth header
             await authenticatedHttpInstance.get<UserInfo>("/users/verify");
+        } catch (error: any) {
+            throw apiErrorHandler(error);
+        }
+    }
+
+    async changePassword(data: UpdatePasswordDto): Promise<void> {
+        try {
+            await authenticatedHttpInstance.put("/users/change-password", data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }

@@ -1,6 +1,6 @@
 // User Schemas
-export { loginSchema, registerSchema, otpVerificationSchema } from './userSchemas';
-export type { LoginSchemaType, RegisterSchemaType, OtpVerificationSchemaType } from './userSchemas';
+export { loginSchema, registerSchema, otpVerificationSchema, updatePasswordSchema } from './userSchemas';
+export type { LoginSchemaType, RegisterSchemaType, OtpVerificationSchemaType, UpdatePasswordSchemaType } from './userSchemas';
 
 // Group Schemas
 export {
@@ -27,7 +27,7 @@ export type {
 } from './groupSchemas';
 
 // User Validators
-export { validateLogin, validateRegister, validateOtpVerification } from './userValidators';
+export { validateLogin, validateRegister, validateOtpVerification, validateUpdatePassword } from './userValidators';
 
 // Group Validators
 export {
