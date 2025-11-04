@@ -1,7 +1,7 @@
 import { UserService , UserServiceImp } from "@/api/services/userService";
-import { CodeVerification, LoginForm, RegisterUserForm, UserInfo } from "@/types/users.types";
+import { CodeVerification, LoginForm, RegisterUserForm, UserInfo, UpdatePasswordDto } from "@/types/users.types";
 import { useState } from "react";
-import { validateLogin, validateRegister, validateOtpVerification } from "@/schemas";
+import { validateLogin, validateRegister, validateOtpVerification, validateUpdatePassword } from "@/schemas";
 import { useAuthStore } from "@/store/authStore";
 
 export interface UseUserActions {
@@ -19,6 +19,8 @@ export interface UseUserActions {
     otpVerification (data : CodeVerification) : void
 
     refreshUserInfo () : void
+
+    changePassword (data : UpdatePasswordDto) : void
 
     logout () : void
 
@@ -95,6 +97,21 @@ export const useUser = () : UseUserActions => {
         }
     }
 
+    const changePassword = async (data : UpdatePasswordDto) => {
+        try {
+            setLoading(true)
+            // Validate data before sending to service
+            const validatedData = validateUpdatePassword(data)
+            await userService.changePassword(validatedData)
+            setLoading(false)
+        } catch (error:any) {
+            // Handle both ValidationError and ApiError
+            setError(error?.message || 'Ocurrió un error al cambiar la contraseña')
+            setLoading(false)
+            throw error; // Re-throw to allow caller to handle
+        }
+    }
+
     const logout = () : void => {
         // Call auth store logout (clears token and updates state)
         logoutAuth();
@@ -112,6 +129,7 @@ export const useUser = () : UseUserActions => {
         register,
         otpVerification,
         refreshUserInfo,
+        changePassword,
         logout,
         clearError
     }

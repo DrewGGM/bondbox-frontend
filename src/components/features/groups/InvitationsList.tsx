@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InvitationCard, Invitation, InvitationStatus } from './InvitationCard';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface InvitationsListProps {
   invitations: Invitation[];
@@ -10,6 +11,8 @@ interface InvitationsListProps {
   actionLoading?: boolean;
 }
 
+const ITEMS_PER_PAGE = 3;
+
 export const InvitationsList: React.FC<InvitationsListProps> = ({
   invitations,
   onAccept,
@@ -17,10 +20,18 @@ export const InvitationsList: React.FC<InvitationsListProps> = ({
   loading = false,
   actionLoading = false,
 }) => {
+  const [showAll, setShowAll] = useState(false);
+
   // Filter only pending invitations
   const pendingInvitations = invitations.filter(
     (inv) => inv.status === InvitationStatus.PENDING && new Date(inv.expiresIn) > new Date()
   );
+
+  const displayedInvitations = showAll
+    ? pendingInvitations
+    : pendingInvitations.slice(0, ITEMS_PER_PAGE);
+
+  const hasMore = pendingInvitations.length > ITEMS_PER_PAGE;
 
   if (loading) {
     return (
@@ -60,16 +71,39 @@ export const InvitationsList: React.FC<InvitationsListProps> = ({
 
   return (
     <div className="space-y-3">
-      {pendingInvitations.map((invitation) => (
-        <InvitationCard
-          key={invitation.id}
-          invitation={invitation}
-          onAccept={onAccept}
-          onDecline={onDecline}
-          isLoading={actionLoading}
-          showActions={true}
-        />
-      ))}
+      <div className="space-y-3">
+        {displayedInvitations.map((invitation) => (
+          <InvitationCard
+            key={invitation.id}
+            invitation={invitation}
+            onAccept={onAccept}
+            onDecline={onDecline}
+            isLoading={actionLoading}
+            showActions={true}
+          />
+        ))}
+      </div>
+
+      {hasMore && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+          >
+            {showAll ? (
+              <>
+                Ver menos
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                Ver más ({pendingInvitations.length - ITEMS_PER_PAGE} más)
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

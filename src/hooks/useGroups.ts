@@ -1,6 +1,6 @@
 import { GroupService, GroupsServiceImp } from "@/api/services/groupService";
 import { useGroupStore } from "@/store/groupStore";
-import { GroupInformation, InvitationResponse } from "@/types/groups.types";
+import { GroupInformation, InvitationResponse, JoinSolicitationResponse, RolInfoCreate, ReasingRol, RenameGroup } from "@/types/groups.types";
 import { useEffect, useState } from "react";
 import {
     validateCreateGroup,
@@ -14,16 +14,23 @@ export interface UseGroupsActions {
     error: string | undefined;
     groups: GroupInformation[];
     invitations: InvitationResponse[];
+    joinSolicitations: JoinSolicitationResponse[];
     selectedGroup: { id: string; name: string; memberCount?: number } | null;
 
     createGroup(name: string): void;
+    renameGroup(groupId: string, name: string): void;
     leaveGroup(groupId: string): void;
     joinGroupByCode(code: string): void;
     acceptInvitation(invitationId: string): void;
     declineInvitation(invitationId: string): void;
     cancelInvitation(invitationId: string): void;
+    cancelJoinSolicitation(solicitationId: string): void;
+    createRol(data: RolInfoCreate): void;
+    reassignRol(data: ReasingRol): void;
+    deleteRol(groupId: string, rolId: string): void;
     refreshGroups(): void;
     refreshInvitations(): void;
+    refreshJoinSolicitations(): void;
     clearError(): void;
 }
 
@@ -35,6 +42,7 @@ export const useGroups = (): UseGroupsActions => {
     const [error, setError] = useState<string | undefined>(undefined);
     const [groups, setGroups] = useState<GroupInformation[]>([]);
     const [invitations, setInvitations] = useState<InvitationResponse[]>([]);
+    const [joinSolicitations, setJoinSolicitations] = useState<JoinSolicitationResponse[]>([]);
     const [initialized, setInitialized] = useState<boolean>(false);
 
     // Initialize: Load groups and set default group
@@ -59,7 +67,8 @@ export const useGroups = (): UseGroupsActions => {
             setLoading(true);
             await Promise.all([
                 loadGroups(),
-                loadInvitations()
+                loadInvitations(),
+                loadJoinSolicitations()
             ]);
             setInitialized(true);
             setLoading(false);
@@ -117,6 +126,15 @@ export const useGroups = (): UseGroupsActions => {
         }
     };
 
+    const loadJoinSolicitations = async () => {
+        try {
+            const response = await groupService.getJoinSolicitationByUser();
+            setJoinSolicitations(response);
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
     const refreshGroups = async () => {
         try {
             setLoading(true);
@@ -139,6 +157,17 @@ export const useGroups = (): UseGroupsActions => {
         }
     };
 
+    const refreshJoinSolicitations = async () => {
+        try {
+            setLoading(true);
+            await loadJoinSolicitations();
+            setLoading(false);
+        } catch (error: any) {
+            setError(error?.message || 'Error al cargar las solicitudes de unión');
+            setLoading(false);
+        }
+    };
+
     const createGroup = async (name: string) => {
         try {
             setLoading(true);
@@ -157,6 +186,35 @@ export const useGroups = (): UseGroupsActions => {
         } catch (error: any) {
             setError(error?.message || 'Error al crear el grupo');
             setLoading(false);
+        }
+    };
+
+    const renameGroup = async (groupId: string, name: string) => {
+        try {
+            setLoading(true);
+            const validatedGroupId = validateGroupId(groupId);
+            const validatedName = validateCreateGroup(name);
+
+            await groupService.renameGroup({
+                idGroup: validatedGroupId,
+                name: validatedName
+            });
+
+            // Update selected group name if it's the one being renamed
+            if (selectedGroup?.id === validatedGroupId) {
+                setSelectedGroup({
+                    ...selectedGroup,
+                    name: validatedName
+                });
+            }
+
+            // Reload groups to reflect the change
+            await loadGroups();
+            setLoading(false);
+        } catch (error: any) {
+            setError(error?.message || 'Error al renombrar el grupo');
+            setLoading(false);
+            throw error; // Re-throw to allow caller to handle
         }
     };
 
@@ -255,6 +313,58 @@ export const useGroups = (): UseGroupsActions => {
         }
     };
 
+    const cancelJoinSolicitation = async (solicitationId: string) => {
+        try {
+            setLoading(true);
+            await groupService.cancelJoinSolicitation(solicitationId);
+
+            // Reload join solicitations after canceling
+            await loadJoinSolicitations();
+
+            setLoading(false);
+        } catch (error: any) {
+            // Handle both ValidationError and ApiError
+            setError(error?.message || 'Error al cancelar la solicitud de unión');
+            setLoading(false);
+        }
+    };
+
+    const createRol = async (data: RolInfoCreate) => {
+        try {
+            setLoading(true);
+            await groupService.createRol(data);
+            setLoading(false);
+        } catch (error: any) {
+            setError(error?.message || 'Error al crear el rol');
+            setLoading(false);
+            throw error; // Re-throw to allow caller to handle
+        }
+    };
+
+    const reassignRol = async (data: ReasingRol) => {
+        try {
+            setLoading(true);
+            await groupService.reasingRol(data);
+            setLoading(false);
+        } catch (error: any) {
+            setError(error?.message || 'Error al reasignar el rol');
+            setLoading(false);
+            throw error; // Re-throw to allow caller to handle
+        }
+    };
+
+    const deleteRol = async (groupId: string, rolId: string) => {
+        try {
+            setLoading(true);
+            await groupService.deleteRol({ groupId, rolId });
+            setLoading(false);
+        } catch (error: any) {
+            setError(error?.message || 'Error al eliminar el rol');
+            setLoading(false);
+            throw error; // Re-throw to allow caller to handle
+        }
+    };
+
     const clearError = (): void => {
         setError(undefined);
     };
@@ -264,15 +374,22 @@ export const useGroups = (): UseGroupsActions => {
         error,
         groups,
         invitations,
+        joinSolicitations,
         selectedGroup,
         createGroup,
+        renameGroup,
         leaveGroup,
         joinGroupByCode,
         acceptInvitation,
         declineInvitation,
         cancelInvitation,
+        cancelJoinSolicitation,
+        createRol,
+        reassignRol,
+        deleteRol,
         refreshGroups,
         refreshInvitations,
+        refreshJoinSolicitations,
         clearError
     };
 };

@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { BondyAIPage } from '@/pages/ai/BondyAIPage';
 import { FinancePage } from '@/pages/finance/FinancePage';
 import { DashboardPage } from '@/pages/groups/GroupsPage';
+import { GroupDetailsPage } from '@/pages/groups/GroupDetailsPage';
 import { LoginPage } from '@/pages/user/LoginPage';
 import { RegisterPage } from '@/pages/user/RegisterPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -50,6 +51,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/grupos/:groupId',
+    element: (
+      <ProtectedRoute>
+        <GroupDetailsPage />
       </ProtectedRoute>
     ),
   },

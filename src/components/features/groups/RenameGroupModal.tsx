@@ -1,41 +1,48 @@
-import React, { useState } from 'react';
-import { X, Users, KeyRound } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Edit3 } from 'lucide-react';
 
-interface JoinGroupModalProps {
+interface RenameGroupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onJoinGroup: (code: string) => void;
+  onRename: (newName: string) => void;
+  currentName: string;
   isLoading?: boolean;
 }
 
-export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
+export const RenameGroupModal: React.FC<RenameGroupModalProps> = ({
   isOpen,
   onClose,
-  onJoinGroup,
+  onRename,
+  currentName,
   isLoading = false,
 }) => {
-  const [joinCode, setJoinCode] = useState('');
+  const [newName, setNewName] = useState(currentName);
+
+  useEffect(() => {
+    if (isOpen) {
+      setNewName(currentName);
+    }
+  }, [isOpen, currentName]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (joinCode.trim()) {
-      onJoinGroup(joinCode.trim());
+    if (newName.trim() && newName.trim() !== currentName) {
+      onRename(newName.trim());
     }
   };
 
   const handleClose = () => {
     if (!isLoading) {
-      setJoinCode('');
+      setNewName(currentName);
       onClose();
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-      {/* Modal */}
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 md:p-10 animate-slideUp">
+      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 animate-slideUp">
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -47,50 +54,41 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
 
         {/* Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center">
-            <KeyRound size={40} className="text-green-600" />
+          <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+            <Edit3 size={40} className="text-primary" />
           </div>
         </div>
 
         {/* Title */}
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-3">
-          Unirse a un Grupo
+          Renombrar Grupo
         </h2>
 
         {/* Description */}
         <p className="text-gray-600 text-center mb-8">
-          Ingresa el código de invitación del grupo al que deseas unirte
+          Ingresa el nuevo nombre para el grupo
         </p>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          {/* Join Code Input */}
           <div className="mb-6">
             <label
-              htmlFor="joinCode"
+              htmlFor="groupName"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Código de Invitación
+              Nombre del Grupo
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <KeyRound className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="joinCode"
-                type="text"
-                value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value)}
-                placeholder="Ej: 7B43456e7uv6"
-                className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-900 placeholder-gray-400 font-mono text-center text-lg tracking-wider"
-                disabled={isLoading}
-                autoFocus
-                maxLength={20}
-              />
-            </div>
-            <p className="mt-2 text-xs text-gray-500 text-center">
-              El código es proporcionado por un administrador del grupo
-            </p>
+            <input
+              id="groupName"
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Ej: Mi Grupo"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-gray-900 placeholder-gray-400"
+              disabled={isLoading}
+              autoFocus
+              required
+            />
           </div>
 
           {/* Buttons */}
@@ -105,8 +103,8 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={!joinCode.trim() || isLoading}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              disabled={!newName.trim() || newName.trim() === currentName || isLoading}
+              className="flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
                 <>
@@ -130,12 +128,12 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Uniéndose...
+                  Renombrando...
                 </>
               ) : (
                 <>
-                  <Users className="w-5 h-5 mr-2" />
-                  Unirse al Grupo
+                  <Edit3 className="w-5 h-5 mr-2" />
+                  Renombrar
                 </>
               )}
             </button>

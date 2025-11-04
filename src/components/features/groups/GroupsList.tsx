@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GroupCard, Group } from './GroupCard';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface GroupsListProps {
   groups: Group[];
@@ -10,6 +11,8 @@ interface GroupsListProps {
   loading?: boolean;
 }
 
+const ITEMS_PER_PAGE = 3;
+
 export const GroupsList: React.FC<GroupsListProps> = ({
   groups,
   onViewDetails,
@@ -17,6 +20,10 @@ export const GroupsList: React.FC<GroupsListProps> = ({
   selectedGroupId,
   loading = false,
 }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const displayedGroups = showAll ? groups : groups.slice(0, ITEMS_PER_PAGE);
+  const hasMore = groups.length > ITEMS_PER_PAGE;
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -54,16 +61,39 @@ export const GroupsList: React.FC<GroupsListProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-      {groups.map((group) => (
-        <GroupCard
-          key={group.id}
-          group={group}
-          onViewDetails={onViewDetails}
-          onSelectGroup={onSelectGroup}
-          isSelected={selectedGroupId === group.id}
-        />
-      ))}
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        {displayedGroups.map((group) => (
+          <GroupCard
+            key={group.id}
+            group={group}
+            onViewDetails={onViewDetails}
+            onSelectGroup={onSelectGroup}
+            isSelected={selectedGroupId === group.id}
+          />
+        ))}
+      </div>
+
+      {hasMore && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+          >
+            {showAll ? (
+              <>
+                Ver menos
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                Ver más ({groups.length - ITEMS_PER_PAGE} más)
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

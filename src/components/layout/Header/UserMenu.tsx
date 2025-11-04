@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { User, Settings, LogOut, ChevronDown, Lock } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useUser } from '@/hooks/useUser';
+import { ChangePasswordModal } from '@/components/common/ChangePasswordModal';
+import toast from 'react-hot-toast';
 
 export const UserMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const { changePassword, isLoading } = useUser();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -42,6 +47,25 @@ export const UserMenu: React.FC = () => {
     // TODO: Implementar navegación a configuraciones
     console.log('Navegar a configuraciones');
     setIsOpen(false);
+  };
+
+  const handleChangePassword = () => {
+    setIsOpen(false);
+    setShowChangePasswordModal(true);
+  };
+
+  const handlePasswordSubmit = async (oldPassword: string, newPassword: string) => {
+    try {
+      await changePassword({
+        old_password: oldPassword,
+        new_password: newPassword,
+      });
+      toast.success('Contraseña cambiada exitosamente');
+      setShowChangePasswordModal(false);
+    } catch (error: any) {
+      // Error is already set in the hook and will be displayed
+      // The modal will stay open
+    }
   };
 
   return (
@@ -89,6 +113,15 @@ export const UserMenu: React.FC = () => {
             <span className="text-sm font-medium">Configuración</span>
           </button>
 
+          {/* Change Password Option */}
+          <button
+            onClick={handleChangePassword}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors text-left"
+          >
+            <Lock className="w-5 h-5 text-gray-500" />
+            <span className="text-sm font-medium">Cambiar Contraseña</span>
+          </button>
+
           <div className="border-t border-gray-100 my-1"></div>
 
           {/* Logout Option */}
@@ -101,6 +134,14 @@ export const UserMenu: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        onSubmit={handlePasswordSubmit}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

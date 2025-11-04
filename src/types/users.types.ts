@@ -32,3 +32,7 @@ export interface OtpResponse{
     message : string
 }
 
+export interface UpdatePasswordDto {
+    new_password: string;
+    old_password: string;
+}

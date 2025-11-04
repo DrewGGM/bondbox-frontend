@@ -1,5 +1,5 @@
-import { LoginForm, RegisterUserForm, CodeVerification } from '@/types/users.types';
-import { loginSchema, registerSchema, otpVerificationSchema } from './userSchemas';
+import { LoginForm, RegisterUserForm, CodeVerification, UpdatePasswordDto } from '@/types/users.types';
+import { loginSchema, registerSchema, otpVerificationSchema, updatePasswordSchema } from './userSchemas';
 import { validate } from './validator';
 
 /**
@@ -30,4 +30,14 @@ export const validateRegister = (data: unknown): RegisterUserForm => {
  */
 export const validateOtpVerification = (data: unknown): CodeVerification => {
   return validate(otpVerificationSchema, data) as CodeVerification;
+};
+
+/**
+ * Validate update password data
+ * @param data - Update password data
+ * @returns Validated update password data
+ * @throws ValidationError if validation fails
+ */
+export const validateUpdatePassword = (data: unknown): UpdatePasswordDto => {
+  return validate(updatePasswordSchema, data) as UpdatePasswordDto;
 };
