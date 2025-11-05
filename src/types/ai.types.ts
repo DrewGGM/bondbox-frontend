@@ -8,9 +8,10 @@ export interface Message {
   content: string;
   timestamp: Date;
   card?: MessageCard;
-  data?: any; // Para datos adicionales del agente de IA
-  client_response?: string; // Respuesta del agente MCP
-  mcp_data?: any; // Datos estructurados del agente MCP
+  data?: any;
+  client_response?: string;
+  mcp_data?: any;
+  images?: string[];
 }
 
 export interface MessageCard {

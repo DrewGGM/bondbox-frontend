@@ -5,9 +5,21 @@ import { ChatHeader } from '@/components/features/ai/ChatHeader';
 import { ChatMessage } from '@/components/features/ai/ChatMessage';
 import { ChatInput } from '@/components/features/ai/ChatInput';
 import { QuickSuggestions } from '@/components/features/ai/QuickSuggestions';
-//import { ChatSidebar } from '@/components/features/ai/ChatSidebar';
-import { aiService, type ConversationMessage } from '@/api/services/aiService';
+import { aiService, type ConversationMessage, type ImageData } from '@/api/services/aiService';
 import type { Message } from '@/types/ai.types';
+
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
 
 export const BondyAIPage: React.FC = () => {
   const { messages, isTyping, addMessage, addMCPResponse, setTyping } = useAiChatStore();
@@ -21,36 +33,50 @@ export const BondyAIPage: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (content: string) => {
-    // Construir historial de conversación (excluir mensaje inicial de bienvenida y limitar a últimos 10 mensajes)
+  const handleSendMessage = async (content: string, imageFiles?: File[]) => {
+    const query = content || '';
+
     const conversationHistory: ConversationMessage[] = messages
-      .filter(msg => msg.id !== '1') // Excluir mensaje de bienvenida
-      .slice(-10) // Últimos 10 mensajes
+      .filter(msg => msg.id !== '1')
+      .slice(-10)
       .map(msg => ({
         role: msg.type === 'user' ? 'user' : 'assistant',
         content: msg.content,
       }));
 
-    // Agregar mensaje del usuario
+    const imageUrls = imageFiles?.map(file => URL.createObjectURL(file));
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content,
+      content: query || (imageFiles && imageFiles.length > 0 ? `📎 ${imageFiles.length} imagen(es)` : ''),
       timestamp: new Date(),
+      images: imageUrls,
     };
     addMessage(userMessage);
 
-    // Consultar al agente de IA con historial de conversación
     setTyping(true);
     try {
-      const response = await aiService.queryAI(content, conversationHistory);
+      let images: ImageData[] | undefined;
 
-      // Usar la nueva función para manejar respuestas MCP
+      if (imageFiles && imageFiles.length > 0) {
+        images = await Promise.all(
+          imageFiles.map(async (file) => {
+            const base64Data = await fileToBase64(file);
+            const mediaType = file.type as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+            return {
+              media_type: mediaType,
+              data: base64Data,
+            };
+          })
+        );
+      }
+
+      const response = await aiService.queryAI(query, conversationHistory, images);
       addMCPResponse(response);
     } catch (error) {
       console.error('Error al consultar el agente:', error);
 
-      // Extraer mensaje de error específico
       const errorMessage = error instanceof Error
         ? error.message
         : 'Lo siento, hubo un error al procesar tu consulta. Por favor, intenta de nuevo.';
@@ -76,11 +102,9 @@ export const BondyAIPage: React.FC = () => {
       <Header />
 
       <div className="flex-1 w-full mx-auto p-3 md:p-6 flex gap-6 h-[calc(100vh-64px)] max-w-7xl">
-        {/* Main Chat Area */}
         <div className="flex-1 bg-white rounded-lg md:rounded-xl shadow-sm flex flex-col overflow-hidden">
           <ChatHeader />
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-5">
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
@@ -110,7 +134,6 @@ export const BondyAIPage: React.FC = () => {
           <QuickSuggestions onSuggestionClick={handleSuggestionClick} />
           <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
         </div>
-        {/* <ChatSidebar stats={stats} /> */}
       </div>
     </div>
   );

@@ -10,10 +10,16 @@ export interface ConversationMessage {
   content: string;
 }
 
+export interface ImageData {
+  media_type: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+  data: string;
+}
+
 export interface AIQueryRequest {
   query: string;
   group_id: string;
   conversation_history?: ConversationMessage[];
+  images?: ImageData[];
 }
 
 export interface Transaction {
@@ -38,19 +44,17 @@ export interface Transaction {
 
 export interface AIQueryResponse {
   client_response: string;
-  data?: unknown; // Datos estructurados del agente MCP
+  data?: unknown;
 }
 
 export const aiService = {
-  async queryAI(query: string, conversationHistory?: ConversationMessage[]): Promise<AIQueryResponse> {
+  async queryAI(query: string, conversationHistory?: ConversationMessage[], images?: ImageData[]): Promise<AIQueryResponse> {
     try {
-      // Obtener token del usuario autenticado
       const token = credentialManager.token();
       if (!token) {
         throw new Error('No estás autenticado. Por favor, inicia sesión.');
       }
 
-      // Obtener grupo seleccionado
       const selectedGroup = useGroupStore.getState().selectedGroup;
       if (!selectedGroup || !selectedGroup.id) {
         throw new Error('No hay un grupo seleccionado. Por favor, selecciona un grupo desde el dashboard.');
@@ -60,6 +64,7 @@ export const aiService = {
         query,
         group_id: selectedGroup.id,
         conversation_history: conversationHistory,
+        images: images,
       };
 
       const fullURL = `${API_BASE_URL}${ENDPOINTS.BONDY.QUERY}`;
@@ -69,20 +74,26 @@ export const aiService = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        timeout: 60000, // 1 minutos para permitir que el agente ejecute herramientas
+        timeout: 60000,
       });
 
       return response.data;
     } catch (error: unknown) {
       console.error('AI Query Error:', error);
-      
+
       if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNABORTED') {
         throw new Error('El agente está tardando más de lo esperado. Por favor, intenta de nuevo.');
       }
-      
-      if (error && typeof error === 'object' && 'response' in error && 
+
+      if (error && typeof error === 'object' && 'response' in error &&
           error.response && typeof error.response === 'object' && 'status' in error.response) {
         const status = (error.response as { status: number }).status;
+        const responseData = (error.response as any).data;
+
+        if (status === 400) {
+          const errorDetail = responseData?.detail || responseData?.message || 'Datos inválidos';
+          throw new Error(`Error de validación: ${errorDetail}`);
+        }
         if (status === 401) {
           throw new Error('Error de autenticación. Verifica el token.');
         }

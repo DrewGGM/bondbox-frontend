@@ -58,6 +58,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       </div>
 
       <div className="flex flex-col gap-1 min-w-0 flex-1">
+        {message.images && message.images.length > 0 && (
+          <div className={`flex flex-wrap gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
+            {message.images.map((imageUrl, index) => (
+              <img
+                key={index}
+                src={imageUrl}
+                alt={`Imagen ${index + 1}`}
+                className="max-w-[200px] max-h-[200px] rounded-lg object-cover border-2 border-gray-200"
+              />
+            ))}
+          </div>
+        )}
+
         <div
           className={`px-3 py-2 md:px-4 md:py-3 rounded-xl text-xs sm:text-sm leading-relaxed break-words ${
             isUser
