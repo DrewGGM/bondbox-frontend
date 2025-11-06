@@ -11,6 +11,7 @@ import { ExpenseCard } from './cards/ExpenseCard';
 import { IncomeCard } from './cards/IncomeCard';
 import { InventoryCard } from './cards/InventoryCard';
 import { MCPDataRenderer } from './MCPDataRenderer';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface ChatMessageProps {
   message: Message;
@@ -78,7 +79,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               : 'bg-gray-100 text-gray-800 rounded-bl-sm'
           }`}
         >
-          {message.client_response || message.content}
+          <MarkdownRenderer content={message.client_response || message.content} isUser={isUser} />
         </div>
 
         {renderCard()}
