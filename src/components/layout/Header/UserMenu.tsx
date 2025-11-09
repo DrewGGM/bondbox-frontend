@@ -1,18 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, ChevronDown, Lock } from 'lucide-react';
+import { User, Settings, LogOut, ChevronDown, Lock, Copy, Check } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useUser } from '@/hooks/useUser';
 import { ChangePasswordModal } from '@/components/common/ChangePasswordModal';
+import credentialManager from '@/utils/credentialManager';
 import toast from 'react-hot-toast';
 
 export const UserMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [idCopied, setIdCopied] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const { changePassword, isLoading } = useUser();
+
+  // Load user ID from token on mount and when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      const id = credentialManager.getUserId();
+      setUserId(id);
+      console.log('User ID from token:', id); // Debug log
+    }
+  }, [isOpen]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -65,6 +77,19 @@ export const UserMenu: React.FC = () => {
     } catch (error: any) {
       // Error is already set in the hook and will be displayed
       // The modal will stay open
+    }
+  };
+
+  const handleCopyUserId = async () => {
+    if (userId) {
+      try {
+        await navigator.clipboard.writeText(userId);
+        setIdCopied(true);
+        toast.success('ID de usuario copiado');
+        setTimeout(() => setIdCopied(false), 2000);
+      } catch (error) {
+        toast.error('Error al copiar el ID');
+      }
     }
   };
 
@@ -122,6 +147,42 @@ export const UserMenu: React.FC = () => {
             <span className="text-sm font-medium">Cambiar Contraseña</span>
           </button>
 
+          <div className="border-t border-gray-100 my-1"></div>
+
+          {/* User ID Section */}
+          <div className="px-4 py-3 bg-gray-50">
+            <p className="text-xs font-medium text-gray-500 mb-2">Tu ID de Usuario</p>
+            {userId ? (
+              <>
+                <div className="flex items-center justify-between gap-2">
+                  <code className="text-xs font-mono text-gray-700 bg-white px-2 py-1 rounded border border-gray-200 flex-1 truncate">
+                    {userId}
+                  </code>
+                  <button
+                    onClick={handleCopyUserId}
+                    className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/5 rounded transition-colors flex-shrink-0"
+                  >
+                    {idCopied ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        Copiado
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        Copiar
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Comparte este ID para que otros te inviten a grupos
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-gray-500 py-2">No se pudo cargar el ID de usuario</p>
+            )}
+          </div>
           <div className="border-t border-gray-100 my-1"></div>
 
           {/* Logout Option */}

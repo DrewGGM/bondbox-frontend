@@ -19,6 +19,7 @@ export interface CodeVerification {
 }
 
 export interface UserInfo {
+    id: string,
     email: string,
     full_name:string,
     image_profile_url: URL | null,

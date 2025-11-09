@@ -7,6 +7,7 @@ export { CreateRoleModal } from './CreateRoleModal';
 export { DeleteRoleModal } from './DeleteRoleModal';
 export { RenameGroupModal } from './RenameGroupModal';
 export { LeaveGroupModal } from './LeaveGroupModal';
+export { InviteUserModal } from './InviteUserModal';
 export { DashboardHeader } from './DashboardHeader';
 export { InvitationCard, InvitationStatus } from './InvitationCard';
 export { InvitationsList } from './InvitationsList';

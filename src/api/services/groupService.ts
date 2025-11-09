@@ -137,7 +137,7 @@ export class GroupsServiceImp implements GroupService{
     }
     async acceptJoinSolicitation(data: AcceptJoinSolicitation): Promise<void> {
         try {
-            await authenticatedHttpInstance.post(`/groups/join-solicitations/accept`,data);
+            await authenticatedHttpInstance.post(`/groups/joinSolicitations/accept`,data);
         } catch (error: any) {
             throw apiErrorHandler(error);
         }
@@ -200,7 +200,7 @@ export class GroupsServiceImp implements GroupService{
     }
     async getInvitationByGroupId(groupId: string): Promise<InvitationResponse[]> {
         try {
-            const response = await authenticatedHttpInstance.get<InvitationResponse[]>(`/groups/join-solicitations/group/${groupId}`);
+            const response = await authenticatedHttpInstance.get<InvitationResponse[]>(`/groups/invitations/${groupId}`);
             return response.data;
         } catch (error: any) {
             throw apiErrorHandler(error);
