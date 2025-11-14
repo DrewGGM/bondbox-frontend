@@ -26,8 +26,8 @@ export const ENDPOINTS = {
     EVENTS: '/api/calendar/events',
   },
   INVENTORY: {
-    PRODUCTS: '/api/inventory/products',
-    SHOPPING_LIST: '/api/inventory/shopping-list',
+    PRODUCTS: '/inventario/productos',
+    SHOPPING_LIST: '/shopping-list',
   },
   GROUPS: {
     LIST: '/api/groups',

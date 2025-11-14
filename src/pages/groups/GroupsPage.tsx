@@ -29,7 +29,8 @@ export const DashboardPage: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showInvitationHistory, setShowInvitationHistory] = useState(false);
-  const [showJoinSolicitationHistory, setShowJoinSolicitationHistory] = useState(false);
+  const [showJoinSolicitationHistory, setShowJoinSolicitationHistory] =
+    useState(false);
   const [groupSearchQuery, setGroupSearchQuery] = useState('');
 
   // Track operations to show appropriate success messages
@@ -170,7 +171,7 @@ export const DashboardPage: React.FC = () => {
     }));
   }, [joinSolicitationsData]);
 
-  const userName = userInfo?.full_name || "User";
+  const userName = userInfo?.full_name || 'User';
 
   const handleCreateGroup = async (name: string) => {
     clearError();
@@ -196,8 +197,13 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleSelectGroup = (group: Group) => {
-    // Set selected group in store
-    setSelectedGroup(group);
+    // Set selected group in store - ensure id is present
+    const selectedGroupData = {
+      id: group.id,
+      name: group.name,
+      memberCount: group.memberCount,
+    };
+    setSelectedGroup(selectedGroupData);
     toast.success(`Grupo "${group.name}" seleccionado como contexto activo`, {
       icon: '✅',
       duration: 3000,
@@ -243,10 +249,7 @@ export const DashboardPage: React.FC = () => {
         {/* Error Display */}
         {error && (
           <div className="mb-6">
-            <ErrorMessage
-              message={error}
-              onDismiss={clearError}
-            />
+            <ErrorMessage message={error} onDismiss={clearError} />
           </div>
         )}
 
@@ -255,15 +258,19 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-                {showInvitationHistory ? 'Historial de Invitaciones' : 'Invitaciones Pendientes'}
+                {showInvitationHistory
+                  ? 'Historial de Invitaciones'
+                  : 'Invitaciones Pendientes'}
               </h2>
               {!showInvitationHistory && (
                 <span className="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-full">
-                  {invitations.filter(
-                    (inv) =>
-                      inv.status === InvitationStatus.PENDING &&
-                      new Date(inv.expiresIn) > new Date()
-                  ).length}
+                  {
+                    invitations.filter(
+                      (inv) =>
+                        inv.status === InvitationStatus.PENDING &&
+                        new Date(inv.expiresIn) > new Date()
+                    ).length
+                  }
                 </span>
               )}
             </div>
@@ -294,18 +301,24 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-                {showJoinSolicitationHistory ? 'Historial de Solicitudes' : 'Solicitudes de Unión Pendientes'}
+                {showJoinSolicitationHistory
+                  ? 'Historial de Solicitudes'
+                  : 'Solicitudes de Unión Pendientes'}
               </h2>
               {!showJoinSolicitationHistory && (
                 <span className="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-full">
-                  {joinSolicitations.filter(
-                    (sol) => sol.status === JoinSolicitationStatus.PENDING
-                  ).length}
+                  {
+                    joinSolicitations.filter(
+                      (sol) => sol.status === JoinSolicitationStatus.PENDING
+                    ).length
+                  }
                 </span>
               )}
             </div>
             <button
-              onClick={() => setShowJoinSolicitationHistory(!showJoinSolicitationHistory)}
+              onClick={() =>
+                setShowJoinSolicitationHistory(!showJoinSolicitationHistory)
+              }
               className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
             >
               <History className="w-4 h-4" />
@@ -314,7 +327,10 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {showJoinSolicitationHistory ? (
-            <JoinSolicitationHistory solicitations={joinSolicitations} loading={isLoading} />
+            <JoinSolicitationHistory
+              solicitations={joinSolicitations}
+              loading={isLoading}
+            />
           ) : (
             <JoinSolicitationsList
               solicitations={joinSolicitations}
@@ -333,7 +349,10 @@ export const DashboardPage: React.FC = () => {
             </h2>
             {selectedGroup && (
               <span className="text-xs text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
-                Grupo activo: <span className="font-semibold text-primary">{selectedGroup.name}</span>
+                Grupo activo:{' '}
+                <span className="font-semibold text-primary">
+                  {selectedGroup.name}
+                </span>
               </span>
             )}
           </div>
