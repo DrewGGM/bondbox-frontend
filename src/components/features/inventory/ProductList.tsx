@@ -5,7 +5,8 @@ import type { ProductWithStatus } from '@/types/inventory.types';
 
 interface ProductListProps {
   products: ProductWithStatus[];
-  onQuantityChange: (productId: string, newQuantity: number) => void;
+  onIncrement: (productId: string) => void;
+  onDecrement: (productId: string) => void;
   onProductClick?: (product: ProductWithStatus) => void;
   onProductDelete?: (productId: string) => void;
   loading?: boolean;
@@ -13,7 +14,8 @@ interface ProductListProps {
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
-  onQuantityChange,
+  onIncrement,
+  onDecrement,
   onProductClick,
   onProductDelete,
   loading = false,
@@ -46,7 +48,8 @@ export const ProductList: React.FC<ProductListProps> = ({
         <ProductItem
           key={product.id}
           product={product}
-          onQuantityChange={onQuantityChange}
+          onIncrement={onIncrement}
+          onDecrement={onDecrement}
           onProductClick={onProductClick}
           onProductDelete={onProductDelete}
         />

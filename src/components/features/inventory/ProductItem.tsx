@@ -4,14 +4,16 @@ import type { ProductWithStatus } from '@/types/inventory.types';
 
 interface ProductItemProps {
   product: ProductWithStatus;
-  onQuantityChange: (productId: string, newQuantity: number) => void;
+  onIncrement: (productId: string) => void;
+  onDecrement: (productId: string) => void;
   onProductClick?: (product: ProductWithStatus) => void;
   onProductDelete?: (productId: string) => void;
 }
 
 export const ProductItem: React.FC<ProductItemProps> = ({
   product,
-  onQuantityChange,
+  onIncrement,
+  onDecrement,
   onProductClick,
   onProductDelete,
 }) => {
@@ -61,12 +63,12 @@ export const ProductItem: React.FC<ProductItemProps> = ({
 
   const handleDecrement = () => {
     if (product.quantity > 0) {
-      onQuantityChange(product.id, product.quantity - 1);
+      onDecrement(product.id);
     }
   };
 
   const handleIncrement = () => {
-    onQuantityChange(product.id, product.quantity + 1);
+    onIncrement(product.id);
   };
 
   return (

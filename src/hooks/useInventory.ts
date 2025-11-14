@@ -28,6 +28,8 @@ interface UseInventoryReturn {
   updateProduct: (id: string, data: UpdateProductRequest) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   updateProductQuantity: (id: string, quantity: number) => Promise<void>;
+  incrementProductQuantity: (id: string, increment?: number) => Promise<void>;
+  decrementProductQuantity: (id: string, decrement?: number) => Promise<void>;
   loadProducts: () => Promise<void>;
   createShoppingList: (data: CreateShoppingListRequest) => Promise<void>;
   updateShoppingList: (
@@ -270,6 +272,36 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
     [loadProducts, loadSummary]
   );
 
+  const incrementProductQuantity = useCallback(
+    async (id: string, increment = 1) => {
+      setError(null);
+      try {
+        await productService.incrementQuantity(id, increment, groupId);
+        await loadProducts();
+        await loadSummary();
+      } catch (err: any) {
+        setError(err.message || 'Error al incrementar cantidad');
+        throw err;
+      }
+    },
+    [groupId, loadProducts, loadSummary]
+  );
+
+  const decrementProductQuantity = useCallback(
+    async (id: string, decrement = 1) => {
+      setError(null);
+      try {
+        await productService.decrementQuantity(id, decrement, groupId);
+        await loadProducts();
+        await loadSummary();
+      } catch (err: any) {
+        setError(err.message || 'Error al decrementar cantidad');
+        throw err;
+      }
+    },
+    [groupId, loadProducts, loadSummary]
+  );
+
   const createShoppingList = useCallback(
     async (data: CreateShoppingListRequest) => {
       setError(null);
@@ -345,6 +377,8 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
     updateProduct,
     deleteProduct,
     updateProductQuantity,
+    incrementProductQuantity,
+    decrementProductQuantity,
     loadProducts,
     createShoppingList,
     updateShoppingList,

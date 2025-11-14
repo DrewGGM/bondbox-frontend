@@ -83,7 +83,8 @@ export const InventoryPage: React.FC = () => {
     createProduct,
     updateProduct,
     deleteProduct,
-    updateProductQuantity,
+    incrementProductQuantity,
+    decrementProductQuantity,
     createShoppingList,
     updateShoppingList,
     deleteShoppingList,
@@ -169,11 +170,12 @@ export const InventoryPage: React.FC = () => {
     }
   };
 
-  const handleQuantityChange = async (
-    productId: string,
-    newQuantity: number
-  ) => {
-    await updateProductQuantity(productId, newQuantity);
+  const handleIncrementQuantity = async (productId: string) => {
+    await incrementProductQuantity(productId, 1);
+  };
+
+  const handleDecrementQuantity = async (productId: string) => {
+    await decrementProductQuantity(productId, 1);
   };
 
   const handleDeleteProduct = async (productId: string) => {
@@ -275,7 +277,8 @@ export const InventoryPage: React.FC = () => {
           ) : (
             <ProductList
               products={products}
-              onQuantityChange={handleQuantityChange}
+              onIncrement={handleIncrementQuantity}
+              onDecrement={handleDecrementQuantity}
               onProductClick={handleEditProduct}
               onProductDelete={handleDeleteProduct}
               loading={loading.products}

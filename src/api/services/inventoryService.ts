@@ -348,6 +348,56 @@ export const productService = {
     return response.data;
   },
 
+  // Increment product quantity
+  incrementQuantity: async (
+    id: string,
+    increment: number,
+    groupId?: string
+  ): Promise<Product> => {
+    if (increment <= 0) {
+      throw new Error('El incremento debe ser mayor que cero');
+    }
+
+    const payload: Record<string, any> = {
+      incremento: increment,
+    };
+
+    if (groupId) {
+      payload.idGroup = groupId;
+    }
+
+    const response = await inventoryApi.patch(
+      `${ENDPOINTS.INVENTORY.PRODUCTS}/${id}/incrementar`,
+      payload
+    );
+    return response.data;
+  },
+
+  // Decrement product quantity
+  decrementQuantity: async (
+    id: string,
+    decrement: number,
+    groupId?: string
+  ): Promise<Product> => {
+    if (decrement <= 0) {
+      throw new Error('El decremento debe ser mayor que cero');
+    }
+
+    const payload: Record<string, any> = {
+      decremento: decrement,
+    };
+
+    if (groupId) {
+      payload.idGroup = groupId;
+    }
+
+    const response = await inventoryApi.patch(
+      `${ENDPOINTS.INVENTORY.PRODUCTS}/${id}/restar`,
+      payload
+    );
+    return response.data;
+  },
+
   // Get inventory summary
   getSummary: async (groupId: string): Promise<InventorySummary> => {
     const response = await inventoryApi.get(
