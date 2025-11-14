@@ -1,5 +1,37 @@
 export type MessageType = 'user' | 'bot';
 
+export type ActionType = 'action';
+export type VisualizationType = 'visualization';
+export type ActionColor = 'green' | 'red' | 'blue' | 'orange' | 'purple';
+export type VisualizationTypeEnum = 'financial' | 'inventory' | 'tasks' | 'shopping_list' | 'generic' | 'error';
+export type ChartType = 'table' | 'pie' | 'bar' | 'line' | 'card' | 'list' | 'kanban' | 'checklist' | 'progress_bar' | 'summary';
+
+export interface Action {
+  type: ActionType;
+  tool: string;
+  icon: string;
+  color: ActionColor;
+  title: string;
+  data: Record<string, any>;
+  timestamp?: string;
+  has_error: boolean;
+}
+
+export interface Visualization {
+  type: VisualizationType;
+  tool: string;
+  icon: string;
+  visualization_type: VisualizationTypeEnum;
+  chart_type?: ChartType;
+  data: any;
+  has_error: boolean;
+}
+
+export interface UIData {
+  actions: Action[];
+  visualizations: Visualization[];
+}
+
 export type CardType = 'task' | 'expense' | 'income' | 'inventory' | 'transaction' | 'category' | 'financial_summary' | 'transaction_list' | 'category_list' | 'budget_status' | 'category_expense' | 'budget_limits' | 'budget_exceeded' | 'email_notification' | 'product' | 'inventory_list' | 'shopping_list' | 'product_search' | 'low_stock' | 'expiring_products' | 'group_members' | 'task_created' | 'task_list' | 'task_updated';
 
 export interface Message {
@@ -12,6 +44,7 @@ export interface Message {
   client_response?: string;
   mcp_data?: any;
   images?: string[];
+  ui_data?: UIData;
 }
 
 export interface MessageCard {
@@ -120,10 +153,10 @@ export interface BudgetStatusCardData {
   total: number;
 }
 
-// Tipos para respuestas del agente MCP
 export interface MCPResponse {
   client_response: string;
   data?: any;
+  ui_data?: UIData;
 }
 
 export interface CategoryExpenseCardData {

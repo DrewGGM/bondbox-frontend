@@ -41,6 +41,7 @@ export const useAiChatStore = create<AiChatState>((set) => ({
         content: response.client_response,
         client_response: response.client_response,
         mcp_data: response.data,
+        ui_data: response.ui_data,
         timestamp: new Date(),
       };
       return {

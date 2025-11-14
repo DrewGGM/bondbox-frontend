@@ -1,6 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { FloatingChatButton } from '@/components/features/chat/FloatingChatButton';
+import { ChatWindow } from '@/components/features/chat/ChatWindow';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,5 +16,11 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <FloatingChatButton />
+      <ChatWindow />
+    </>
+  );
 };

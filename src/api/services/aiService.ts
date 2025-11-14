@@ -2,6 +2,7 @@ import axios from 'axios';
 import credentialManager from '@/utils/credentialManager';
 import { useGroupStore } from '@/store/groupStore';
 import { ENDPOINTS } from '@/api/endpoints';
+import type { UIData } from '@/types/ai.types';
 
 const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || (window as any).ENV?.VITE_API_GATEWAY_URL;
 
@@ -45,6 +46,7 @@ export interface Transaction {
 export interface AIQueryResponse {
   client_response: string;
   data?: unknown;
+  ui_data?: UIData;
 }
 
 export const aiService = {

@@ -12,6 +12,8 @@ import { IncomeCard } from './cards/IncomeCard';
 import { InventoryCard } from './cards/InventoryCard';
 import { MCPDataRenderer } from './MCPDataRenderer';
 import { MarkdownRenderer } from './MarkdownRenderer';
+import { ActionBadge } from './ActionBadge';
+import { VisualizationCard } from './VisualizationCard';
 
 interface ChatMessageProps {
   message: Message;
@@ -40,6 +42,40 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const renderMCPData = () => {
     if (!message.mcp_data) return null;
     return <MCPDataRenderer data={message.mcp_data} />;
+  };
+
+  const renderUIData = () => {
+    if (!message.ui_data) return null;
+
+    const { actions, visualizations } = message.ui_data;
+
+    if (actions.length === 0 && visualizations.length === 0) return null;
+
+    return (
+      <div className="space-y-3 mt-2">
+        {actions.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold text-gray-600">Acciones Realizadas</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {actions.map((action, idx) => (
+                <ActionBadge key={idx} action={action} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {visualizations.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold text-gray-600">Datos</h4>
+            <div className="grid grid-cols-1 gap-3">
+              {visualizations.map((viz, idx) => (
+                <VisualizationCard key={idx} visualization={viz} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -82,8 +118,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           <MarkdownRenderer content={message.client_response || message.content} isUser={isUser} />
         </div>
 
-        {renderCard()}
-        {renderMCPData()}
+        {message.ui_data ? renderUIData() : (
+          <>
+            {renderCard()}
+            {renderMCPData()}
+          </>
+        )}
 
         <div className={`text-xs text-gray-500 px-1 ${isUser ? 'text-right' : ''}`}>
           {message.timestamp.toLocaleTimeString('es-CO', {
