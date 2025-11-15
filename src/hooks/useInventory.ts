@@ -11,17 +11,14 @@ import type {
   CreateShoppingListRequest,
   UpdateShoppingListRequest,
   ProductWithStatus,
-  InventorySummary,
 } from '@/types/inventory.types';
 
 interface UseInventoryReturn {
   products: ProductWithStatus[];
   shoppingLists: ShoppingList[];
-  summary: InventorySummary | null;
   loading: {
     products: boolean;
     shoppingLists: boolean;
-    summary: boolean;
   };
   error: string | null;
   createProduct: (data: CreateProductRequest) => Promise<void>;
@@ -45,11 +42,9 @@ interface UseInventoryReturn {
 export const useInventory = (groupId: string): UseInventoryReturn => {
   const [products, setProducts] = useState<ProductWithStatus[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
-  const [summary, setSummary] = useState<InventorySummary | null>(null);
   const [loading, setLoading] = useState({
     products: false,
     shoppingLists: false,
-    summary: false,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -144,77 +139,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
     }
   }, [groupId]);
 
-  const loadSummary = useCallback(async () => {
-    if (!groupId) return;
-
-    setLoading((prev) => ({ ...prev, summary: true }));
-    setError(null);
-
-    try {
-      const summaryData = await productService.getSummary(groupId);
-      setSummary(summaryData);
-    } catch (err: any) {
-      // Log del error para debugging
-      console.error(
-        'Error al cargar summary:',
-        err.response?.status,
-        err.response?.data || err.message
-      );
-
-      // Si el error es 500, intentar calcular desde productos como fallback
-      if (err.response?.status === 500 || err.response?.status === 404) {
-        try {
-          // If summary endpoint doesn't exist or has server error, calculate from products
-          const productsData = await productService.list(groupId);
-          const productsWithStatus = productsData.map(calculateProductStatus);
-
-          const lowStockCount = productsWithStatus.filter(
-            (p) => p.quantity <= 3
-          ).length;
-          const expiringSoonCount = productsWithStatus.filter(
-            (p) => p.expiration_status === 'expiring_soon'
-          ).length;
-          const expiredCount = productsWithStatus.filter(
-            (p) => p.expiration_status === 'expired'
-          ).length;
-
-          setSummary({
-            low_stock_count: lowStockCount,
-            expiring_soon_count: expiringSoonCount,
-            total_products: productsWithStatus.length,
-            expired_count: expiredCount,
-          });
-        } catch (fallbackErr: any) {
-          // Si el fallback también falla, usar valores por defecto
-          console.error('Error en fallback de summary:', fallbackErr);
-          setSummary({
-            low_stock_count: 0,
-            expiring_soon_count: 0,
-            total_products: 0,
-            expired_count: 0,
-          });
-        }
-      } else {
-        // Para otros errores, usar valores por defecto
-        setSummary({
-          low_stock_count: 0,
-          expiring_soon_count: 0,
-          total_products: 0,
-          expired_count: 0,
-        });
-      }
-    } finally {
-      setLoading((prev) => ({ ...prev, summary: false }));
-    }
-  }, [groupId]);
-
   const createProduct = useCallback(
     async (data: CreateProductRequest) => {
       setError(null);
       try {
         await productService.create(data);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         // Extract error message - check multiple possible locations
         const errorMessage =
@@ -260,7 +190,7 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
         throw err;
       }
     },
-    [loadProducts, loadSummary]
+    [loadProducts]
   );
 
   const updateProduct = useCallback(
@@ -269,13 +199,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       try {
         await productService.update(id, data);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         setError(err.message || 'Error al actualizar producto');
         throw err;
       }
     },
-    [loadProducts, loadSummary]
+    [loadProducts]
   );
 
   const deleteProduct = useCallback(
@@ -284,13 +213,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       try {
         await productService.delete(id, groupId);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         setError(err.message || 'Error al eliminar producto');
         throw err;
       }
     },
-    [groupId, loadProducts, loadSummary]
+    [groupId, loadProducts]
   );
 
   const updateProductQuantity = useCallback(
@@ -299,13 +227,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       try {
         await productService.updateQuantity(id, quantity);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         setError(err.message || 'Error al actualizar cantidad');
         throw err;
       }
     },
-    [loadProducts, loadSummary]
+    [loadProducts]
   );
 
   const incrementProductQuantity = useCallback(
@@ -314,13 +241,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       try {
         await productService.incrementQuantity(id, increment, groupId);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         setError(err.message || 'Error al incrementar cantidad');
         throw err;
       }
     },
-    [groupId, loadProducts, loadSummary]
+    [groupId, loadProducts]
   );
 
   const decrementProductQuantity = useCallback(
@@ -329,13 +255,12 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       try {
         await productService.decrementQuantity(id, decrement, groupId);
         await loadProducts();
-        await loadSummary();
       } catch (err: any) {
         setError(err.message || 'Error al decrementar cantidad');
         throw err;
       }
     },
-    [groupId, loadProducts, loadSummary]
+    [groupId, loadProducts]
   );
 
   const createShoppingList = useCallback(
@@ -399,7 +324,6 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
   const loadingRef = useRef({
     products: false,
     shoppingLists: false,
-    summary: false,
   });
   const lastGroupIdRef = useRef<string | null>(null);
 
@@ -414,20 +338,17 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
     loadingRef.current = {
       products: false,
       shoppingLists: false,
-      summary: false,
     };
 
     // Cargar datos solo una vez por groupId
     loadProducts();
     loadShoppingLists();
-    loadSummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId]); // Solo dependemos de groupId, las funciones ya están memoizadas
 
   return {
     products,
     shoppingLists,
-    summary,
     loading,
     error,
     createProduct,
