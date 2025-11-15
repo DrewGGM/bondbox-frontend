@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Users, ChevronDown } from 'lucide-react';
 import { useGroupStore } from '@/store/groupStore';
 import { UserMenu } from './UserMenu';
+import { NotificationBell } from './NotificationBell';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -132,8 +133,9 @@ export const Header: React.FC = () => {
           </Link>
         </nav>
 
-        {/* User Menu - Desktop */}
-        <div className="hidden md:block">
+        {/* Notificaciones y User Menu - Desktop */}
+        <div className="hidden md:flex items-center gap-2">
+          <NotificationBell />
           <UserMenu />
         </div>
 
