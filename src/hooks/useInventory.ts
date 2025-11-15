@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   productService,
   shoppingListService,
@@ -395,13 +395,34 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
     setError(null);
   }, []);
 
+  // Usar ref para evitar múltiples ejecuciones simultáneas
+  const loadingRef = useRef({
+    products: false,
+    shoppingLists: false,
+    summary: false,
+  });
+  const lastGroupIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (groupId) {
-      loadProducts();
-      loadShoppingLists();
-      loadSummary();
+    // Solo ejecutar si el groupId cambió o es la primera vez
+    if (!groupId || groupId === lastGroupIdRef.current) {
+      return;
     }
-  }, [groupId, loadProducts, loadShoppingLists, loadSummary]);
+
+    // Marcar que estamos cargando para este groupId
+    lastGroupIdRef.current = groupId;
+    loadingRef.current = {
+      products: false,
+      shoppingLists: false,
+      summary: false,
+    };
+
+    // Cargar datos solo una vez por groupId
+    loadProducts();
+    loadShoppingLists();
+    loadSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId]); // Solo dependemos de groupId, las funciones ya están memoizadas
 
   return {
     products,
