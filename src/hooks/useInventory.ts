@@ -118,6 +118,13 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       const lists = await shoppingListService.list(groupId);
       setShoppingLists(lists);
     } catch (err: any) {
+      // Log del error para debugging
+      console.error(
+        'Error al cargar shopping lists:',
+        err.response?.status,
+        err.response?.data || err.message
+      );
+
       // Si el error es "Cannot GET" o 404, el servicio no está disponible
       const errorMessage = err.response?.data?.message || err.message || '';
 
@@ -147,26 +154,55 @@ export const useInventory = (groupId: string): UseInventoryReturn => {
       const summaryData = await productService.getSummary(groupId);
       setSummary(summaryData);
     } catch (err: any) {
-      // If summary endpoint doesn't exist, calculate from products
-      const productsData = await productService.list(groupId);
-      const productsWithStatus = productsData.map(calculateProductStatus);
+      // Log del error para debugging
+      console.error(
+        'Error al cargar summary:',
+        err.response?.status,
+        err.response?.data || err.message
+      );
 
-      const lowStockCount = productsWithStatus.filter(
-        (p) => p.quantity <= 3
-      ).length;
-      const expiringSoonCount = productsWithStatus.filter(
-        (p) => p.expiration_status === 'expiring_soon'
-      ).length;
-      const expiredCount = productsWithStatus.filter(
-        (p) => p.expiration_status === 'expired'
-      ).length;
+      // Si el error es 500, intentar calcular desde productos como fallback
+      if (err.response?.status === 500 || err.response?.status === 404) {
+        try {
+          // If summary endpoint doesn't exist or has server error, calculate from products
+          const productsData = await productService.list(groupId);
+          const productsWithStatus = productsData.map(calculateProductStatus);
 
-      setSummary({
-        low_stock_count: lowStockCount,
-        expiring_soon_count: expiringSoonCount,
-        total_products: productsWithStatus.length,
-        expired_count: expiredCount,
-      });
+          const lowStockCount = productsWithStatus.filter(
+            (p) => p.quantity <= 3
+          ).length;
+          const expiringSoonCount = productsWithStatus.filter(
+            (p) => p.expiration_status === 'expiring_soon'
+          ).length;
+          const expiredCount = productsWithStatus.filter(
+            (p) => p.expiration_status === 'expired'
+          ).length;
+
+          setSummary({
+            low_stock_count: lowStockCount,
+            expiring_soon_count: expiringSoonCount,
+            total_products: productsWithStatus.length,
+            expired_count: expiredCount,
+          });
+        } catch (fallbackErr: any) {
+          // Si el fallback también falla, usar valores por defecto
+          console.error('Error en fallback de summary:', fallbackErr);
+          setSummary({
+            low_stock_count: 0,
+            expiring_soon_count: 0,
+            total_products: 0,
+            expired_count: 0,
+          });
+        }
+      } else {
+        // Para otros errores, usar valores por defecto
+        setSummary({
+          low_stock_count: 0,
+          expiring_soon_count: 0,
+          total_products: 0,
+          expired_count: 0,
+        });
+      }
     } finally {
       setLoading((prev) => ({ ...prev, summary: false }));
     }
