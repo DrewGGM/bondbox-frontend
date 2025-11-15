@@ -392,6 +392,9 @@ export const productService = {
       );
     }
 
+    // Imprimir el ID del usuario en consola
+    console.log('ID del usuario actual:', userId);
+
     const payload: Record<string, any> = {
       decremento: decrement,
       user_id: userId,
