@@ -16,5 +16,13 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: ['.loca.lt', '.trycloudflare.com'],
+    proxy: {
+      '/api': {
+        target: 'https://api.bond-box.shop',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
   },
 });

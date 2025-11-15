@@ -46,6 +46,232 @@ interface MCPDataRendererProps {
 export const MCPDataRenderer: React.FC<MCPDataRendererProps> = ({ data }) => {
   if (!data) return null;
 
+  // Detectar nuevo formato con ui_data (visualizaciones y acciones estructuradas)
+  if (data.ui_data) {
+    const { visualizations = [], actions = [] } = data.ui_data;
+
+    return (
+      <div className="space-y-4">
+        {/* Renderizar visualizaciones */}
+        {visualizations.map((viz: any, index: number) => {
+          if (viz.has_error) {
+            return (
+              <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-red-700">
+                  <span className="text-xl">⚠️</span>
+                  <span className="font-medium">Error al obtener datos</span>
+                </div>
+              </div>
+            );
+          }
+
+          // Renderizar según el tipo de visualización
+          if (viz.visualization_type === 'generic' && viz.data) {
+            // Renderizar datos genéricos con formato mejorado
+            return (
+              <div key={index} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">{viz.icon || '📊'}</span>
+                  <span className="font-semibold text-gray-800">
+                    {viz.tool?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || 'Resultados'}
+                  </span>
+                </div>
+
+                {/* Renderizar resumen si hay totales */}
+                {(viz.data.total_ingresos !== undefined || viz.data.total_gastos !== undefined || viz.data.todas_categorias !== undefined) && (
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {viz.data.todas_categorias !== undefined && (
+                      <div className="bg-white rounded-lg p-3 text-center">
+                        <div className="text-xs text-gray-600 mb-1">Total</div>
+                        <div className="text-2xl font-bold text-blue-600">{viz.data.todas_categorias}</div>
+                        <div className="text-xs text-gray-500">categorías</div>
+                      </div>
+                    )}
+                    {viz.data.total_ingresos !== undefined && (
+                      <div className="bg-white rounded-lg p-3 text-center">
+                        <div className="text-xs text-gray-600 mb-1">Ingresos</div>
+                        <div className="text-2xl font-bold text-green-600">{viz.data.total_ingresos}</div>
+                        <div className="text-xs text-gray-500">categorías</div>
+                      </div>
+                    )}
+                    {viz.data.total_gastos !== undefined && (
+                      <div className="bg-white rounded-lg p-3 text-center">
+                        <div className="text-xs text-gray-600 mb-1">Gastos</div>
+                        <div className="text-2xl font-bold text-red-600">{viz.data.total_gastos}</div>
+                        <div className="text-xs text-gray-500">categorías</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Renderizar el resto de los datos */}
+                <MCPDataRenderer data={viz.data} />
+              </div>
+            );
+          }
+
+          // Renderizar los datos directamente
+          return (
+            <div key={index}>
+              <MCPDataRenderer data={viz.data} />
+            </div>
+          );
+        })}
+
+        {/* Renderizar acciones si existen */}
+        {actions.length > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="font-medium text-blue-900 mb-2">Acciones sugeridas:</div>
+            <div className="space-y-2">
+              {actions.map((action: any, index: number) => (
+                <div key={index} className="text-sm text-blue-700">
+                  • {action.description || action.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Detectar formato con titulo (formato más reciente de Bondy)
+  if (data.categorias && Array.isArray(data.categorias) && data.titulo) {
+    // Inferir tipo desde el primer elemento de categorías o del título
+    const firstCat = data.categorias[0];
+    const isIncome =
+      firstCat?.tipo === 'INCOME' ||
+      data.titulo.toLowerCase().includes('ingreso');
+    const bgColor = isIncome ? 'bg-green-50' : 'bg-red-50';
+    const borderColor = isIncome ? 'border-green-200' : 'border-red-200';
+    const textColor = isIncome ? 'text-green-700' : 'text-red-700';
+    const icon = isIncome ? '💰' : '💸';
+
+    return (
+      <div>
+        <div className={`text-sm font-medium ${textColor} mb-2 flex items-center gap-2`}>
+          <span>{icon}</span>
+          <span>
+            {data.titulo} ({data.categorias.length})
+          </span>
+        </div>
+        <div className="grid gap-2">
+          {data.categorias.map((cat: any, idx: number) => (
+            <div
+              key={idx}
+              className={`flex items-center gap-3 ${bgColor} rounded-lg p-3 border ${borderColor}`}
+            >
+              <div
+                className="w-3 h-3 rounded-full flex-shrink-0"
+                style={{ backgroundColor: cat.color }}
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">{cat.nombre}</div>
+                <div className="text-xs text-gray-500">{cat.tipo}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Detectar formato genérico de categorías con tipo (nuevo formato de Bondy)
+  if (data.categorias && Array.isArray(data.categorias) && data.tipo) {
+    const isIncome = data.tipo === 'INCOME';
+    const bgColor = isIncome ? 'bg-green-50' : 'bg-red-50';
+    const borderColor = isIncome ? 'border-green-200' : 'border-red-200';
+    const textColor = isIncome ? 'text-green-700' : 'text-red-700';
+    const icon = isIncome ? '💰' : '💸';
+    const label = isIncome ? 'Ingresos' : 'Gastos';
+
+    return (
+      <div>
+        <div className={`text-sm font-medium ${textColor} mb-2 flex items-center gap-2`}>
+          <span>{icon}</span>
+          <span>Categorías de {label} ({data.categorias.length})</span>
+        </div>
+        <div className="grid gap-2">
+          {data.categorias.map((cat: any, idx: number) => (
+            <div
+              key={idx}
+              className={`flex items-center gap-3 ${bgColor} rounded-lg p-3 border ${borderColor}`}
+            >
+              <div
+                className="w-3 h-3 rounded-full flex-shrink-0"
+                style={{ backgroundColor: cat.color }}
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">{cat.nombre}</div>
+                <div className="text-xs text-gray-500">{cat.tipo}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Detectar formato de categorías_ingresos/categorias_gastos (nuevo formato de Bondy)
+  if (data.categorias_ingresos || data.categorias_gastos) {
+    const allCategories = [
+      ...(data.categorias_ingresos || []),
+      ...(data.categorias_gastos || [])
+    ];
+
+    if (allCategories.length > 0) {
+      return (
+        <div className="space-y-3">
+          {data.categorias_ingresos && data.categorias_ingresos.length > 0 && (
+            <div>
+              <div className="text-sm font-medium text-green-700 mb-2 flex items-center gap-2">
+                <span>💰</span>
+                <span>Categorías de Ingresos ({data.categorias_ingresos.length})</span>
+              </div>
+              <div className="grid gap-2">
+                {data.categorias_ingresos.map((cat: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-3 bg-green-50 rounded-lg p-3 border border-green-200">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">{cat.nombre}</div>
+                      <div className="text-xs text-gray-500">{cat.tipo}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {data.categorias_gastos && data.categorias_gastos.length > 0 && (
+            <div>
+              <div className="text-sm font-medium text-red-700 mb-2 flex items-center gap-2">
+                <span>💸</span>
+                <span>Categorías de Gastos ({data.categorias_gastos.length})</span>
+              </div>
+              <div className="grid gap-2">
+                {data.categorias_gastos.map((cat: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-3 bg-red-50 rounded-lg p-3 border border-red-200">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">{cat.nombre}</div>
+                      <div className="text-xs text-gray-500">{cat.tipo}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+  }
+
   // Detectar array de categorías con gastos (respuesta de "¿En qué categorías he gastado más?")
   if (Array.isArray(data) && data.length > 0 && data[0].category_id && data[0].category_name && data[0].total !== undefined) {
     return <CategoryExpenseCard data={data} />;

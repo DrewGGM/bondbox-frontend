@@ -5,6 +5,9 @@ import { DashboardPage } from '@/pages/groups/GroupsPage';
 import { GroupDetailsPage } from '@/pages/groups/GroupDetailsPage';
 import { InventoryPage } from '@/pages/inventory/InventoryPage';
 import { ShoppingListPage } from '@/pages/inventory/ShoppingListPage';
+import { MomentsPage } from '@/pages/moments/MomentsPage';
+import { TasksPage } from '@/pages/tasks/TasksPage';
+import { CalendarPage } from '@/pages/calendar/CalendarPage';
 import { LoginPage } from '@/pages/user/LoginPage';
 import { RegisterPage } from '@/pages/user/RegisterPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -13,21 +16,6 @@ import { PublicRoute } from '@/components/auth/PublicRoute';
 import { HomeRoute } from '@/components/auth/HomeRoute';
 
 // Placeholder pages
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-    <div className="text-center p-8 bg-white rounded-2xl shadow-xl">
-      <h1 className="text-5xl font-bold text-primary mb-4">{title}</h1>
-      <p className="text-gray-600 text-lg">
-        Esta página será desarrollada pronto
-      </p>
-      <div className="mt-6 flex gap-4 justify-center">
-        <div className="w-12 h-12 bg-primary rounded-lg animate-pulse"></div>
-        <div className="w-12 h-12 bg-primary-dark rounded-lg animate-pulse delay-75"></div>
-        <div className="w-12 h-12 bg-secondary rounded-lg animate-pulse delay-150"></div>
-      </div>
-    </div>
-  </div>
-);
 
 export const router = createBrowserRouter([
   {
@@ -78,7 +66,7 @@ export const router = createBrowserRouter([
     path: '/tareas',
     element: (
       <ProtectedRoute>
-        <PlaceholderPage title="✅ Tareas" />
+        <TasksPage />
       </ProtectedRoute>
     ),
   },
@@ -86,7 +74,7 @@ export const router = createBrowserRouter([
     path: '/calendario',
     element: (
       <ProtectedRoute>
-        <PlaceholderPage title="📅 Calendario" />
+        <CalendarPage />
       </ProtectedRoute>
     ),
   },
@@ -107,10 +95,18 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/momentos',
+    element: (
+      <ProtectedRoute>
+        <MomentsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/bitacora',
     element: (
       <ProtectedRoute>
-        <PlaceholderPage title="📸 Bitácora" />
+        <MomentsPage />
       </ProtectedRoute>
     ),
   },

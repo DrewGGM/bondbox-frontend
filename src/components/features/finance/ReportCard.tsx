@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { financeUtils } from '@/api/services/financeService';
+import { formatDate } from '@/utils/formatters';
 import type { Report } from '@/types/finance.types';
 
 interface ReportCardProps {
@@ -110,7 +111,7 @@ export const ReportCard: React.FC<ReportCardProps> = ({
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="text-xs text-gray-600 mb-1">Período</div>
               <div className="text-sm font-semibold text-gray-900">
-                {report.start_date} - {report.end_date}
+                {formatDate(report.start_date)} - {formatDate(report.end_date)}
               </div>
             </div>
 

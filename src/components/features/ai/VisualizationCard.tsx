@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Visualization } from '@/types/ai.types';
+import { MCPDataRenderer } from './MCPDataRenderer';
 
 interface VisualizationCardProps {
   visualization: Visualization;
@@ -249,12 +250,54 @@ export const VisualizationCard: React.FC<VisualizationCardProps> = ({ visualizat
   };
 
   const renderGeneric = () => {
-    return (
-      <pre className="text-xs bg-gray-50 p-3 rounded overflow-x-auto">
-        {JSON.stringify(visualization.data, null, 2)}
-      </pre>
-    );
+    // Usar MCPDataRenderer para renderizar datos estructurados
+    const rendered = <MCPDataRenderer data={visualization.data} />;
+
+    // Si MCPDataRenderer retorna null (no detectó el formato), mostrar JSON como fallback
+    if (!rendered) {
+      return (
+        <pre className="text-xs bg-gray-50 p-3 rounded overflow-x-auto">
+          {JSON.stringify(visualization.data, null, 2)}
+        </pre>
+      );
+    }
+
+    return rendered;
   };
+
+  // Si el visualization_type es "generic", SIEMPRE usar MCPDataRenderer
+  // porque indica datos genéricos que pueden tener cualquier estructura
+  if (visualization.visualization_type === 'generic') {
+    const mcpRendered = <MCPDataRenderer data={visualization.data} />;
+
+    // Si MCPDataRenderer puede manejar los datos, retornar sin wrapper
+    if (mcpRendered) {
+      return <>{mcpRendered}</>;
+    }
+  }
+
+  // Si el chart_type no es reconocido (default), intentar renderizar con MCPDataRenderer sin wrapper
+  const knownChartTypes = [
+    'table',
+    'card',
+    'summary',
+    'list',
+    'checklist',
+    'progress_bar',
+    'pie',
+  ];
+
+  if (
+    !visualization.chart_type ||
+    !knownChartTypes.includes(visualization.chart_type)
+  ) {
+    const mcpRendered = <MCPDataRenderer data={visualization.data} />;
+
+    // Si MCPDataRenderer puede manejar los datos, retornar sin wrapper
+    if (mcpRendered) {
+      return <>{mcpRendered}</>;
+    }
+  }
 
   return (
     <div className="bg-white p-4 rounded-lg shadow border border-gray-200">

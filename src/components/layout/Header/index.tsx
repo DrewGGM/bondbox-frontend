@@ -101,6 +101,16 @@ export const Header: React.FC = () => {
             Calendario
           </Link>
           <Link
+            to="/momentos"
+            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              isActive('/momentos')
+                ? 'bg-primary text-white'
+                : 'text-white/80 hover:text-white hover:bg-primary/20'
+            }`}
+          >
+            Momentos
+          </Link>
+          <Link
             to="/inventario"
             className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
               isActive('/inventario')
@@ -183,6 +193,17 @@ export const Header: React.FC = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               Calendario
+            </Link>
+            <Link
+              to="/momentos"
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                isActive('/momentos')
+                  ? 'bg-primary text-white'
+                  : 'text-white/80 hover:text-white hover:bg-primary/20'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Momentos
             </Link>
             <Link
               to="/inventario"
