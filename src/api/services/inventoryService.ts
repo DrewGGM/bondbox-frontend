@@ -407,7 +407,7 @@ export const productService = {
 
     const payload: Record<string, any> = {
       decremento: decrement,
-      userid: userId,
+      userId: userId, // El backend espera userId (camelCase)
     };
 
     if (groupId) {
