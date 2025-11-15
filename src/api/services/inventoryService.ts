@@ -407,7 +407,7 @@ export const productService = {
 
     const payload: Record<string, any> = {
       decremento: decrement,
-      user_id: userId,
+      userid: userId,
     };
 
     if (groupId) {
