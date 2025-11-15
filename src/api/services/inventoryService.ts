@@ -12,6 +12,7 @@ import type {
 import axios from 'axios';
 import { STORAGE_KEYS } from '@/config/storageKeys';
 import { ENDPOINTS } from '@/api/endpoints';
+import credentialManager from '@/utils/credentialManager';
 
 // Create a separate HTTP instance for inventory
 // Inventory endpoints don't use /api/v1 prefix in the API Gateway
@@ -383,8 +384,17 @@ export const productService = {
       throw new Error('El decremento debe ser mayor que cero');
     }
 
+    // Obtener el ID del usuario del token
+    const userId = credentialManager.getUserId();
+    if (!userId) {
+      throw new Error(
+        'No se pudo obtener el ID del usuario. Por favor, inicia sesión nuevamente.'
+      );
+    }
+
     const payload: Record<string, any> = {
       decremento: decrement,
+      user_id: userId,
     };
 
     if (groupId) {
