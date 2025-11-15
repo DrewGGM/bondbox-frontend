@@ -12,6 +12,7 @@ import type {
 import axios from 'axios';
 import { STORAGE_KEYS } from '@/config/storageKeys';
 import { ENDPOINTS } from '@/api/endpoints';
+import credentialManager from '@/utils/credentialManager';
 
 // Create a separate HTTP instance for inventory
 // Inventory endpoints don't use /api/v1 prefix in the API Gateway
@@ -383,18 +384,54 @@ export const productService = {
       throw new Error('El decremento debe ser mayor que cero');
     }
 
+    // Obtener el ID del usuario del token
+    const userId = credentialManager.getUserId();
+    if (!userId) {
+      throw new Error(
+        'No se pudo obtener el ID del usuario. Por favor, inicia sesión nuevamente.'
+      );
+    }
+
+    // Validar que groupId esté presente
+    if (!groupId) {
+      console.warn('⚠️ groupId no está disponible en decrementQuantity');
+    }
+
+    // Mostrar información de validación
+    console.log('=== VALIDACIÓN DE DATOS ===');
+    console.log('✅ user_id obtenido:', userId);
+    console.log(
+      groupId ? `✅ idGroup obtenido: ${groupId}` : '⚠️ idGroup NO disponible'
+    );
+    console.log('===========================');
+
     const payload: Record<string, any> = {
       decremento: decrement,
+      userId: userId, // El backend espera userId (camelCase)
     };
 
     if (groupId) {
       payload.idGroup = groupId;
+    } else {
+      console.warn(
+        '⚠️ El payload NO incluirá idGroup porque no está disponible'
+      );
     }
 
-    const response = await inventoryApi.patch(
-      `${ENDPOINTS.INVENTORY.PRODUCTS}/${id}/restar`,
-      payload
-    );
+    // Mostrar la petición completa que se envía
+    const url = `${ENDPOINTS.INVENTORY.PRODUCTS}/${id}/restar`;
+    console.log('=== PETICIÓN PARA RESTAR PRODUCTO ===');
+    console.log('Método:', 'PATCH');
+    console.log('URL:', url);
+    console.log('URL Completa:', `${BASE_URL}${url}`);
+    console.log('Payload (Body):', JSON.stringify(payload, null, 2));
+    console.log('Headers:', {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer [TOKEN]', // El token se agrega automáticamente
+    });
+    console.log('=====================================');
+
+    const response = await inventoryApi.patch(url, payload);
     return response.data;
   },
 

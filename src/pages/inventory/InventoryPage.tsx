@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import {
-  InventorySummaryCard,
   ProductList,
   ProductFormModal,
   ShoppingListFormModal,
@@ -77,7 +76,6 @@ export const InventoryPage: React.FC = () => {
   const {
     products,
     shoppingLists,
-    summary,
     loading,
     error,
     createProduct,
@@ -234,18 +232,6 @@ export const InventoryPage: React.FC = () => {
             <ErrorMessage message={error} onDismiss={clearError} />
           </div>
         )}
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <InventorySummaryCard
-            type="low_stock"
-            count={summary?.low_stock_count || 0}
-          />
-          <InventorySummaryCard
-            type="expiring_soon"
-            count={summary?.expiring_soon_count || 0}
-          />
-        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-6">
